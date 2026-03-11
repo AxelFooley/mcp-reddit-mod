@@ -9,11 +9,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### MCP Server Foundation
 
-- [ ] **MCPF-01**: MCP server uses Streamable HTTP transport (not stdio) for Docker deployment
-- [ ] **MCPF-02**: Server exposes `/mcp` endpoint on 0.0.0.0:8000 for external access
-- [ ] **MCPF-03**: Server implements tool discovery protocol (`list_tools()` method)
-- [ ] **MCPF-04**: Server provides metadata (name, version, description) to clients
-- [ ] **MCPF-05**: Server returns structured error responses per MCP protocol
+- [x] **MCPF-01**: MCP server uses Streamable HTTP transport (not stdio) for Docker deployment
+- [x] **MCPF-02**: Server exposes `/mcp` endpoint on 0.0.0.0:8000 for external access
+- [x] **MCPF-03**: Server implements tool discovery protocol (`list_tools()` method)
+- [x] **MCPF-04**: Server provides metadata (name, version, description) to clients
+- [x] **MCPF-05**: Server returns structured error responses per MCP protocol
 
 ### Reddit API Integration
 
@@ -92,11 +92,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MCPF-01 | Phase 1 | Pending |
-| MCPF-02 | Phase 1 | Pending |
-| MCPF-03 | Phase 1 | Pending |
-| MCPF-04 | Phase 1 | Pending |
-| MCPF-05 | Phase 1 | Pending |
+| MCPF-01 | Phase 1 | Complete |
+| MCPF-02 | Phase 1 | Complete |
+| MCPF-03 | Phase 1 | Complete |
+| MCPF-04 | Phase 1 | Complete |
+| MCPF-05 | Phase 1 | Complete |
 | DEPL-01 | Phase 1 | Complete |
 | DEPL-02 | Phase 1 | Complete |
 | DEPL-03 | Phase 1 | Pending |
