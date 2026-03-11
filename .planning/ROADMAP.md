@@ -80,12 +80,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   6. PRAW exceptions propagate to AI agent with error details but without credential information
   7. All PRAW API calls complete within timeout period (no indefinite hangs)
 
-**Plans**: 3 plans in 2 waves
+**Plans**: 4 plans in 3 waves
 
 **Plan List:**
 - [ ] 03-00-PLAN.md — Test infrastructure foundation (Wave 0)
 - [ ] 03-01-PLAN.md — Core moderation tools with validation and sanitization (Wave 1)
-- [ ] 03-02-PLAN.md — User history, timeout protection, and error propagation (Wave 2)
+- [ ] 03-02-PLAN.md — Timeout protection for all PRAW API calls (Wave 2)
+- [ ] 03-03-PLAN.md — User history fetching and error propagation (Wave 3)
 
 ### Phase 4: Production Deployment
 
@@ -113,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. MCP Server Foundation | 5/5 | Complete | 2026-03-11 |
 | 2. Reddit Integration | 2/2 | Complete | 2026-03-11 |
-| 3. Moderation Tools | 0/3 | Not started | - |
+| 3. Moderation Tools | 0/4 | Not started | - |
 | 4. Production Deployment | 0/TBD | Not started | - |
