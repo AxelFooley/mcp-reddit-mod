@@ -2,8 +2,8 @@
 phase: 01-mcp-server-foundation
 plan: 02b
 type: execute
-wave: 1
-depends_on: []
+wave: 2
+depends_on: ["01-02a"]
 files_modified:
   - docker-compose.yml
   - .env.example

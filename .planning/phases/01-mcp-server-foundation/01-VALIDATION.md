@@ -3,7 +3,7 @@ phase: 1
 slug: mcp-server-foundation
 status: draft
 nyquist_compliant: true
-wave_0_complete: false
+wave_0_complete: true
 created: 2025-03-11
 ---
 
@@ -54,11 +54,11 @@ created: 2025-03-11
 
 ## Wave 0 Requirements
 
-- [ ] `tests/test_server.py` — stubs for MCPF-01 through MCPF-05
-- [ ] `tests/conftest.py` — shared fixtures for MCP client/server
-- [ ] `pytest` and `pytest-anyio` installed via pyproject.toml
+- [x] `tests/test_server.py` — stubs for MCPF-01 through MCPF-05
+- [x] `tests/conftest.py` — shared fixtures for MCP client/server
+- [x] `pytest` and `pytest-anyio` installed via pyproject.toml
 
-*If none: "Existing infrastructure covers all phase requirements."*
+*Wave 0 complete: Plan 01-00 creates all test infrastructure.*
 
 ---
 

@@ -3,7 +3,7 @@ phase: 01-mcp-server-foundation
 plan: 02a
 type: execute
 wave: 1
-depends_on: []
+depends_on: ["01-00", "01-01"]
 files_modified:
   - Dockerfile
   - .dockerignore
