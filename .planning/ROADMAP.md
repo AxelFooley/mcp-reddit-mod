@@ -34,7 +34,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Docker container can be built and started with `docker compose up` using provided docker-compose.yml
   5. Environment variables from .env.example are properly documented for Reddit credentials
 
-**Plans**: TBD
+**Plans**: 4 plans in 2 waves
+
+**Plan List:**
+- [ ] 01-00-PLAN.md — Test infrastructure foundation (Wave 0)
+- [ ] 01-01-PLAN.md — FastMCP server with HTTP transport and metadata (Wave 1)
+- [ ] 01-02-PLAN.md — Docker deployment infrastructure (Wave 1)
+- [ ] 01-03-PLAN.md — Project documentation and git setup (Wave 2)
 
 ### Phase 2: Reddit Integration
 
@@ -95,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. MCP Server Foundation | 0/TBD | Not started | - |
+| 1. MCP Server Foundation | 0/4 | Planning complete | - |
 | 2. Reddit Integration | 0/TBD | Not started | - |
 | 3. Moderation Tools | 0/TBD | Not started | - |
 | 4. Production Deployment | 0/TBD | Not started | - |
