@@ -37,8 +37,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Deployment
 
-- [ ] **DEPL-01**: Dockerfile uses `python:3.12-slim` base image
-- [ ] **DEPL-02**: Dockerfile includes uv package manager for dependency installation
+- [x] **DEPL-01**: Dockerfile uses `python:3.12-slim` base image
+- [x] **DEPL-02**: Dockerfile includes uv package manager for dependency installation
 - [ ] **DEPL-03**: docker-compose.yml provided for homelab deployment
 - [ ] **DEPL-04**: `.env.example` file includes all 5 required Reddit credential variables
 - [ ] **DEPL-05**: GitHub Actions CI workflow runs on every push
@@ -97,8 +97,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MCPF-03 | Phase 1 | Pending |
 | MCPF-04 | Phase 1 | Pending |
 | MCPF-05 | Phase 1 | Pending |
-| DEPL-01 | Phase 1 | Pending |
-| DEPL-02 | Phase 1 | Pending |
+| DEPL-01 | Phase 1 | Complete |
+| DEPL-02 | Phase 1 | Complete |
 | DEPL-03 | Phase 1 | Pending |
 | DEPL-04 | Phase 1 | Pending |
 | REDI-01 | Phase 2 | Pending |
