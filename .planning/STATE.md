@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 02-01-PLAN.md - PRAW client implementation
-last_updated: "2026-03-11T11:50:08.569Z"
-last_activity: 2026-03-11 — PRAW Reddit client with lazy singleton pattern complete
+status: planned
+stopped_at: Phase 3 plans created, ready for execution
+last_updated: "2026-03-11T12:00:00.000Z"
+last_activity: 2026-03-11 — Phase 3 moderation tools plans created
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 8
+  completed_phases: 2
+  total_plans: 11
   completed_plans: 7
-  percent: 75
+  percent: 64
 ---
 
 # Project State
@@ -22,16 +22,16 @@ See: .planning/PROJECT.md (updated 2025-03-11)
 
 **Core value:** AI-assisted Reddit moderation with human oversight. Automated review of mod queue items with intelligent repeat offender detection, while keeping humans in control of destructive actions.
 
-**Current focus:** Phase 2 - Reddit Integration
+**Current focus:** Phase 3 - Moderation Tools
 
 ## Current Position
 
-Phase: 2 of 4 (Reddit Integration)
-Plan: 02-02 - Test infrastructure foundation (next)
-Status: Plan 02-01 complete, Reddit client implemented
-Last activity: 2026-03-11 — PRAW Reddit client with lazy singleton pattern complete
+Phase: 3 of 4 (Moderation Tools)
+Plan: 03-00 - Test infrastructure foundation (next)
+Status: Plans complete, ready for execution
+Last activity: 2026-03-11 — Phase 3 moderation tools plans created
 
-Progress: [███████░░░] 75% (7 of 8 total plans, Phase 1 complete, Phase 2 in progress)
+Progress: [████████░░] 64% (7 of 11 total plans completed, Phase 1-2 complete, Phase 3 planned)
 
 ## Performance Metrics
 
@@ -45,14 +45,14 @@ Progress: [███████░░░] 75% (7 of 8 total plans, Phase 1 comp
 | Phase | Plans | Complete | Avg/Plan |
 |-------|-------|----------|----------|
 | 01 | 5 | 5 | 3 min |
-| 02 | 2 | 1 | 5 min |
+| 02 | 2 | 2 | 5 min |
+| 03 | 3 | 0 | - |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (2 min), 02-00 (3 min), 02-01 (5 min)
-- Trend: Phase 2 Reddit integration in progress
+- Trend: Phase 3 moderation tools planned and ready for execution
 
 *Updated after each plan completion*
-| Phase 02-reddit-integration P00 | 112 | 4 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -74,6 +74,10 @@ Recent decisions affecting current work:
 - [Phase 02-reddit-integration]: TDD approach: test stubs created before implementation (Nyquist compliant)
 - [Phase 02-reddit-integration]: PRAW>=7.8.0 selected as official Python Reddit SDK per RESEARCH.md
 - [Phase 02-reddit-integration]: Class-based test organization for requirement traceability
+- [Phase 03-moderation-tools]: TDD plan for business logic (modtools.py) per Phase 3 research
+- [Phase 03-moderation-tools]: concurrent.futures ThreadPoolExecutor for timeout protection (cross-platform)
+- [Phase 03-moderation-tools]: Regex-based thing ID validation before API calls (SAFE-01)
+- [Phase 03-moderation-tools]: Extended error sanitization for moderation-specific patterns (SAFE-02)
 
 ### Pending Todos
 
@@ -89,23 +93,40 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T11:47:00Z
-Stopped at: Completed 02-01-PLAN.md - PRAW client implementation
+Last session: 2026-03-11T12:00:00Z
+Stopped at: Phase 3 plans created and committed
 Resume file: None
 
 ---
 
-**Phase 2 Plans Ready:**
+**Phase 3 Plans Ready:**
 
-1. **02-00-PLAN.md** (Wave 0): Test infrastructure foundation
-   - Create tests/test_reddit_client.py with stubs for REDI-01, REDI-02
-   - Add mock_reddit_credentials and praw_mock fixtures to conftest.py
-   - Add PRAW dependency (praw>=7.8.0) to pyproject.toml
+1. **03-00-PLAN.md** (Wave 0): Test infrastructure foundation
+   - Create tests/test_moderation_tools.py with stubs for MODT-01 through MODT-05, SAFE-01/02, REDI-03/04
+   - Add PRAW moderation API mock fixtures to conftest.py
+   - 33 test stubs total with pytest.skip Wave markers
 
-2. **02-01-PLAN.md** (Wave 1): PRAW client implementation
-   - Create src/reddit_client.py with get_reddit_client() function
-   - Implement lazy singleton pattern for PRAW instance
-   - Add error sanitization to prevent credential leakage
-   - Implement all tests for REDI-01 and REDI-02 requirements
+2. **03-01-PLAN.md** (Wave 1, TDD): Core moderation tools with validation and sanitization
+   - Implement validate_thing_id() and sanitize_moderation_error() (SAFE-01, SAFE-02)
+   - Implement get_modqueue() for fetching modqueue items (MODT-01)
+   - Implement approve_item() and remove_item() for content management (MODT-02, MODT-03)
+   - Implement ban_user() for user banning (MODT-04)
+   - Register all 4 tools with MCP server
+   - 22 tests to implement (TDD workflow: RED → GREEN → REFACTOR)
 
-**Next step:** `/gsd:execute-phase 02-reddit-integration`
+3. **03-02-PLAN.md** (Wave 2, TDD): User history, timeout protection, and error propagation
+   - Add PRAW request_timeout to reddit_client.py (REDI-04 part 1)
+   - Implement with_timeout decorator wrapper (REDI-04 part 2)
+   - Apply timeout wrapper to all moderation functions
+   - Implement get_user_history() for repeat offender detection (MODT-05)
+   - Verify error propagation with sanitized details (REDI-03)
+   - Register get_user_history with MCP server
+   - 11 tests to implement (TDD workflow)
+
+**Phase 3 totals:**
+- 3 plans in 2 waves
+- 15 tasks total (4 + 5 + 6)
+- 33 tests total (Nyquist compliant)
+- Requirements covered: MODT-01/02/03/04/05, SAFE-01/02, REDI-03/04
+
+**Next step:** `/gsd:execute-phase 03-moderation-tools`
