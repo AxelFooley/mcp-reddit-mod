@@ -290,3 +290,167 @@ class TestUserHistory:
         Reference: REQUIREMENTS.md MODT-05
         """
         pytest.skip(reason="Wave 2 - User history implementation")
+
+
+class TestValidation:
+    """
+    Test suite for SAFE-01: Thing ID Validation.
+
+    Verifies that thing_id values are validated before making
+    Reddit API calls to prevent errors and wasted requests.
+    """
+
+    @pytest.mark.unit
+    def test_validate_thing_id_valid_comment(self):
+        """
+        SAFE-01: Valid comment thing_id passes validation.
+
+        Expected behavior (Wave 1):
+        - System validates t1_ prefix for comments
+        - Valid base36 ID after prefix accepted
+        - Validation returns True or passes without error
+        - thing_id format: t1_ followed by base36 characters
+
+        Reference: REQUIREMENTS.md SAFE-01
+        """
+        pytest.skip(reason="Wave 1 - Thing ID validation")
+
+    @pytest.mark.unit
+    def test_validate_thing_id_valid_submission(self):
+        """
+        SAFE-01: Valid submission thing_id passes validation.
+
+        Expected behavior (Wave 1):
+        - System validates t3_ prefix for submissions
+        - Valid base36 ID after prefix accepted
+        - Validation returns True or passes without error
+        - thing_id format: t3_ followed by base36 characters
+
+        Reference: REQUIREMENTS.md SAFE-01
+        """
+        pytest.skip(reason="Wave 1 - Thing ID validation")
+
+    @pytest.mark.unit
+    def test_validate_thing_id_invalid_format(self):
+        """
+        SAFE-01: Invalid format rejected.
+
+        Expected behavior (Wave 1):
+        - System rejects thing_id with wrong format
+        - Missing prefix raises ValidationError
+        - Wrong prefix type raises ValidationError
+        - Invalid base36 characters rejected
+
+        Reference: REQUIREMENTS.md SAFE-01
+        """
+        pytest.skip(reason="Wave 1 - Thing ID validation")
+
+    @pytest.mark.unit
+    def test_validate_thing_id_missing_prefix(self):
+        """
+        SAFE-01: Missing prefix rejected.
+
+        Expected behavior (Wave 1):
+        - System rejects thing_id without type prefix
+        - Plain base36 string without t1_/t3_ prefix raises error
+        - Clear error message indicates required prefix format
+
+        Reference: REQUIREMENTS.md SAFE-01
+        """
+        pytest.skip(reason="Wave 1 - Thing ID validation")
+
+    @pytest.mark.unit
+    def test_validate_thing_id_wrong_type(self):
+        """
+        SAFE-01: Wrong prefix type rejected.
+
+        Expected behavior (Wave 1):
+        - System rejects unsupported thing_id prefixes
+        - Only t1_ (comment) and t3_ (submission) supported
+        - Other prefixes (t2_, t4_, t5_, etc.) raise ValidationError
+        - Clear error message indicates valid prefix types
+
+        Reference: REQUIREMENTS.md SAFE-01
+        """
+        pytest.skip(reason="Wave 1 - Thing ID validation")
+
+
+class TestSanitization:
+    """
+    Test suite for SAFE-02: Error Message Sanitization.
+
+    Verifies that error messages are sanitized to prevent
+    leakage of sensitive information like credentials.
+    """
+
+    @pytest.mark.unit
+    def test_error_sanitization_removes_credentials(self):
+        """
+        SAFE-02: Credential values removed from errors.
+
+        Expected behavior (Wave 1):
+        - System removes actual credential values from error messages
+        - REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET removed
+        - REDDIT_USERNAME, REDDIT_PASSWORD removed
+        - Replaced with REDACTED or *** placeholders
+
+        Reference: REQUIREMENTS.md SAFE-02
+        """
+        pytest.skip(reason="Wave 1 - Error sanitization")
+
+    @pytest.mark.unit
+    def test_error_sanitization_removes_subreddit_names(self):
+        """
+        SAFE-02: Subreddit names removed from errors.
+
+        Expected behavior (Wave 1):
+        - System redacts subreddit names from error messages
+        - Prevents leaking sensitive subreddit information
+        - Replaced with placeholder like [SUBREDDIT]
+
+        Reference: REQUIREMENTS.md SAFE-02
+        """
+        pytest.skip(reason="Wave 1 - Error sanitization")
+
+    @pytest.mark.unit
+    def test_error_sanitization_removes_usernames(self):
+        """
+        SAFE-02: Usernames removed from errors.
+
+        Expected behavior (Wave 1):
+        - System redacts usernames from error messages
+        - Prevents leaking user privacy information
+        - Replaced with placeholder like [USER]
+
+        Reference: REQUIREMENTS.md SAFE-02
+        """
+        pytest.skip(reason="Wave 1 - Error sanitization")
+
+    @pytest.mark.unit
+    def test_error_sanitization_removes_thing_ids(self):
+        """
+        SAFE-02: Thing IDs removed from errors.
+
+        Expected behavior (Wave 1):
+        - System redacts thing_ids from error messages
+        - Prevents leaking content identifiers
+        - Replaced with placeholder like [THING_ID]
+
+        Reference: REQUIREMENTS.md SAFE-02
+        """
+        pytest.skip(reason="Wave 1 - Error sanitization")
+
+    @pytest.mark.unit
+    def test_error_sanitization_preserves_safe_content(self):
+        """
+        SAFE-02: Safe content preserved in errors.
+
+        Expected behavior (Wave 1):
+        - System preserves non-sensitive error content
+        - Error type and message structure maintained
+        - Only sensitive patterns are replaced
+        - Error remains actionable for debugging
+
+        Reference: REQUIREMENTS.md SAFE-02
+        """
+        pytest.skip(reason="Wave 1 - Error sanitization")
