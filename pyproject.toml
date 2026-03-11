@@ -5,6 +5,7 @@ description = "AI-assisted Reddit moderation MCP server"
 requires-python = ">=3.10"
 dependencies = [
     "mcp[cli]>=1.26.0",
+    "praw>=7.8.0",
     "python-dotenv>=1.0.0",
 ]
 
@@ -23,6 +24,7 @@ dev-dependencies = [
     "pytest>=8.3.0",
     "pytest-anyio>=0.0.0",
     "pytest-cov>=5.0.0",
+    "pytest-mock>=3.14.0",
     "ruff>=0.8.0",
 ]
 
