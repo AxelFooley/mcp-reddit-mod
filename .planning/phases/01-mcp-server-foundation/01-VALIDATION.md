@@ -2,7 +2,7 @@
 phase: 1
 slug: mcp-server-foundation
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2025-03-11
 ---
@@ -43,10 +43,10 @@ created: 2025-03-11
 | 01-01-03 | 01 | 1 | MCPF-03 | unit | `pytest tests/test_server.py::test_tool_discovery` | ❌ W0 | ⬜ pending |
 | 01-01-04 | 01 | 1 | MCPF-04 | unit | `pytest tests/test_server.py::test_server_metadata` | ❌ W0 | ⬜ pending |
 | 01-01-05 | 01 | 1 | MCPF-05 | unit | `pytest tests/test_server.py::test_error_responses` | ❌ W0 | ⬜ pending |
-| 01-02-01 | 02 | 1 | DEPL-01 | unit | `docker build -t test .` | ❌ W0 | ⬜ pending |
-| 01-02-02 | 02 | 1 | DEPL-02 | unit | `docker build -t test .` | ❌ W0 | ⬜ pending |
-| 01-02-03 | 02 | 1 | DEPL-03 | unit | `docker compose config` | ❌ W0 | ⬜ pending |
-| 01-02-04 | 02 | 1 | DEPL-04 | manual | Verify .env.example contains all 5 variables | ❌ W0 | ⬜ pending |
+| 01-02a-01 | 02a | 1 | DEPL-01 | unit | `docker build -t test .` | ❌ W0 | ⬜ pending |
+| 01-02a-02 | 02a | 1 | DEPL-02 | unit | `docker build -t test .` | ❌ W0 | ⬜ pending |
+| 01-02b-01 | 02b | 1 | DEPL-03 | unit | `docker compose config` | ❌ W0 | ⬜ pending |
+| 01-02b-02 | 02b | 1 | DEPL-04 | manual | Verify .env.example contains all 5 variables | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -75,11 +75,11 @@ created: 2025-03-11
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 60s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 60s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
