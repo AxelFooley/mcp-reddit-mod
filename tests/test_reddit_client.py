@@ -39,8 +39,9 @@ class TestRedditClientInitialization:
         client = get_reddit_client()
 
         # Verify PRAW was called with correct parameters
-        assert praw.Reddit.called
-        call_kwargs = praw.Reddit.call_args[1]
+        mock_reddit_class = praw_mock['class']
+        assert mock_reddit_class.called
+        call_kwargs = mock_reddit_class.call_args[1]
         assert call_kwargs['client_id'] == 'test_client_id'
         assert call_kwargs['client_secret'] == 'test_secret'
         assert call_kwargs['username'] == 'test_user'
@@ -69,7 +70,8 @@ class TestRedditClientInitialization:
         client = get_reddit_client()
 
         # Verify script app auth (username/password provided)
-        call_kwargs = praw.Reddit.call_args[1]
+        mock_reddit_class = praw_mock['class']
+        call_kwargs = mock_reddit_class.call_args[1]
         assert 'username' in call_kwargs
         assert 'password' in call_kwargs
         # read_only=False enables write access for moderation
@@ -99,7 +101,8 @@ class TestRedditClientInitialization:
         assert client1 is client2
 
         # Verify PRAW constructor only called once
-        assert praw.Reddit.call_count == 1
+        mock_reddit_class = praw_mock['class']
+        assert mock_reddit_class.call_count == 1
 
 
 class TestRedditClientErrors:

@@ -80,6 +80,8 @@ def mock_reddit_credentials(monkeypatch):
 
     This fixture sets up test environment variables for Reddit API
     credentials, allowing tests to run without exposing real credentials.
+    It also patches both config and reddit_client modules to ensure
+    values are available regardless of import order.
 
     Args:
         monkeypatch: Pytest monkeypatch fixture for environment modification
@@ -94,8 +96,32 @@ def mock_reddit_credentials(monkeypatch):
         "REDDIT_PASSWORD": "test_password",
         "REDDIT_USER_AGENT": "test_agent",
     }
+    # Set environment variables
     for key, value in mock_env.items():
         monkeypatch.setenv(key, value)
+
+    # Patch config module
+    try:
+        import src.config
+        monkeypatch.setattr(src.config, "REDDIT_CLIENT_ID", "test_client_id")
+        monkeypatch.setattr(src.config, "REDDIT_CLIENT_SECRET", "test_secret")
+        monkeypatch.setattr(src.config, "REDDIT_USERNAME", "test_user")
+        monkeypatch.setattr(src.config, "REDDIT_PASSWORD", "test_password")
+        monkeypatch.setattr(src.config, "REDDIT_USER_AGENT", "test_agent")
+    except ImportError:
+        pass  # Config module not imported yet
+
+    # Also patch reddit_client module directly (it imports these from config)
+    try:
+        import src.reddit_client
+        monkeypatch.setattr(src.reddit_client, "REDDIT_CLIENT_ID", "test_client_id")
+        monkeypatch.setattr(src.reddit_client, "REDDIT_CLIENT_SECRET", "test_secret")
+        monkeypatch.setattr(src.reddit_client, "REDDIT_USERNAME", "test_user")
+        monkeypatch.setattr(src.reddit_client, "REDDIT_PASSWORD", "test_password")
+        monkeypatch.setattr(src.reddit_client, "REDDIT_USER_AGENT", "test_agent")
+    except (ImportError, AttributeError):
+        pass  # Reddit_client module not imported yet
+
     return mock_env
 
 
@@ -116,9 +142,40 @@ def praw_mock(monkeypatch):
     from unittest.mock import Mock
     mock_instance = Mock()
     mock_instance.user.me.return_value = Mock(name="test_user")
+    mock_reddit_class = Mock(return_value=mock_instance)
     with monkeypatch.context() as m:
-        m.setattr("praw.Reddit", Mock(return_value=mock_instance))
-        yield mock_instance
+        m.setattr("praw.Reddit", mock_reddit_class)
+        yield {"instance": mock_instance, "class": mock_reddit_class}
+
+
+@pytest.fixture(autouse=True)
+def reset_reddit_client_singleton():
+    """
+    Reset the Reddit client singleton between tests.
+
+    This fixture ensures that each test gets a fresh Reddit client instance
+    by resetting the module-level _reddit_instance variable before each test.
+
+    Note: Does NOT reload config module as that would interfere with
+    mock_reddit_credentials fixture patching.
+
+    Auto-use ensures this runs for every test without explicit request.
+    """
+    # Reset before test (if module exists)
+    try:
+        import src.reddit_client
+        src.reddit_client._reddit_instance = None
+    except (ImportError, AttributeError):
+        pass  # Module doesn't exist yet or no _reddit_instance
+
+    yield
+
+    # Reset after test (if module exists)
+    try:
+        import src.reddit_client
+        src.reddit_client._reddit_instance = None
+    except (ImportError, AttributeError):
+        pass  # Module doesn't exist yet or no _reddit_instance
 
 
 # Test configuration markers
