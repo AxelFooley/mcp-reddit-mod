@@ -1,80 +1,92 @@
-"""Pytest configuration and shared fixtures for MCP server testing."""
+"""
+Pytest configuration and shared fixtures for MCP server testing.
+
+This module provides common fixtures and configuration for testing
+the italia-career-mod MCP server implementation.
+"""
 
 import pytest
+import asyncio
+from typing import AsyncGenerator
 
-# Enable anyio plugin for async test support
+# Enable anyio for async test support
 pytest_plugins = ["anyio"]
 
 
 @pytest.fixture
-def server_config():
-    """Provide test server configuration.
-
-    This fixture returns configuration parameters for the MCP server.
-    Will be used in Wave 1 when server implementation exists.
-
-    Returns:
-        dict: Server configuration with host, port, and transport settings.
+def event_loop():
     """
-    return {
-        "host": "0.0.0.0",
-        "port": 8000,
-        "transport": "streamable-http",
-    }
+    Create an event loop for async tests.
+
+    This fixture ensures that each test gets its own event loop,
+    preventing state leakage between tests.
+    """
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture
+async def mcp_server_instance():
+    """
+    Fixture providing the MCP server instance for testing.
+
+    This fixture will be implemented in Wave 1 (01-01-PLAN.md)
+    once the FastMCP server is created.
+
+    Yields:
+        The FastMCP server instance configured for testing
+    """
+    # Wave 0 stub - implementation in 01-01
+    pytest.skip("Wave 0 stub - server implementation in 01-01-PLAN.md")
 
 
 @pytest.fixture
 async def mcp_client():
-    """Provide async MCP client for testing.
+    """
+    Fixture providing an async MCP client for testing.
 
-    This fixture will create an async HTTP client for MCP protocol testing.
-    Will be implemented in Wave 1 when server is available.
+    This fixture will be implemented in Wave 1 (01-01-PLAN.md)
+    once the FastMCP server transport is configured.
 
     Yields:
-        Async client instance for making MCP requests.
+        An async client capable of making MCP protocol requests
     """
-    # Placeholder for Wave 1 implementation
-    # Will return an httpx.AsyncClient configured for MCP protocol
-    pytest.skip("Wave 0 stub - async client fixture implemented in 01-01")
-    yield  # pragma: no cover
+    # Wave 0 stub - implementation in 01-01
+    pytest.skip("Wave 0 stub - client implementation in 01-01-PLAN.md")
 
 
 @pytest.fixture
-def sample_tool_response():
-    """Provide sample tool response structure for testing.
+def sample_reddit_config():
+    """
+    Fixture providing sample Reddit configuration for testing.
 
-    Returns the expected structure of MCP tool responses
-    according to the MCP specification.
+    Returns:
+        dict: Sample Reddit API credentials and configuration
     """
     return {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "result": {
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Sample response"
-                }
-            ]
-        }
+        "client_id": "test_client_id",
+        "client_secret": "test_client_secret",
+        "username": "test_user",
+        "password": "test_password",
+        "user_agent": "italia-career-mod/0.1.0 by test_user"
     }
-}
 
 
-@pytest.fixture
-def sample_error_response():
-    """Provide sample error response structure for testing.
-
-    Returns the expected structure of MCP error responses
-    according to the MCP JSON-RPC specification.
+# Test configuration markers
+def pytest_configure(config):
     """
-    return {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "error": {
-            "code": -32600,
-            "message": "Invalid Request",
-            "data": None
-        }
-    }
-}
+    Configure pytest with custom markers.
+
+    This function sets up custom markers that can be used
+    to categorize tests (e.g., slow, integration, etc.).
+    """
+    config.addinivalue_line(
+        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+    )
+    config.addinivalue_line(
+        "markers", "integration: marks tests as integration tests"
+    )
+    config.addinivalue_line(
+        "markers", "unit: marks tests as unit tests"
+    )
