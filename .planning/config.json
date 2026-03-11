@@ -1,0 +1,20 @@
+{
+  "mode": "yolo",
+  "granularity": "standard",
+  "parallelization": true,
+  "commit_docs": true,
+  "model_profile": "quality",
+  "ci": {
+    "enabled": true,
+    "docker_registry": "ghcr.io/axelfooley",
+    "linters": "mandatory",
+    "test_coverage": "full"
+  },
+  "workflow": {
+    "research": true,
+    "plan_check": true,
+    "verifier": true,
+    "nyquist_validation": true,
+    "auto_advance": false
+  }
+}
