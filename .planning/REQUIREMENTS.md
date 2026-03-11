@@ -17,8 +17,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Reddit API Integration
 
-- [ ] **REDI-01**: PRAW client initialized from environment variables (REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD, REDDIT_USER_AGENT)
-- [ ] **REDI-02**: PRAW uses script app authentication (not OAuth)
+- [x] **REDI-01**: PRAW client initialized from environment variables (REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD, REDDIT_USER_AGENT)
+- [x] **REDI-02**: PRAW uses script app authentication (not OAuth)
 - [ ] **REDI-03**: PRAW exceptions propagate to AI agent with error details
 - [ ] **REDI-04**: All PRAW API calls wrapped with timeout to prevent indefinite hanging
 
@@ -101,8 +101,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEPL-02 | Phase 1 | Complete |
 | DEPL-03 | Phase 1 | Complete |
 | DEPL-04 | Phase 1 | Complete |
-| REDI-01 | Phase 2 | Pending |
-| REDI-02 | Phase 2 | Pending |
+| REDI-01 | Phase 2 | Complete |
+| REDI-02 | Phase 2 | Complete |
 | REDI-03 | Phase 3 | Pending |
 | REDI-04 | Phase 3 | Pending |
 | MODT-01 | Phase 3 | Pending |
