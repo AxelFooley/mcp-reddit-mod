@@ -73,6 +73,54 @@ def sample_reddit_config():
     }
 
 
+@pytest.fixture
+def mock_reddit_credentials(monkeypatch):
+    """
+    Mock Reddit credentials for testing (REDI-01, REDI-02).
+
+    This fixture sets up test environment variables for Reddit API
+    credentials, allowing tests to run without exposing real credentials.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for environment modification
+
+    Returns:
+        dict: Dictionary of mock environment variables
+    """
+    mock_env = {
+        "REDDIT_CLIENT_ID": "test_client_id",
+        "REDDIT_CLIENT_SECRET": "test_secret",
+        "REDDIT_USERNAME": "test_user",
+        "REDDIT_PASSWORD": "test_password",
+        "REDDIT_USER_AGENT": "test_agent",
+    }
+    for key, value in mock_env.items():
+        monkeypatch.setenv(key, value)
+    return mock_env
+
+
+@pytest.fixture
+def praw_mock(monkeypatch):
+    """
+    Mock PRAW Reddit class for testing.
+
+    This fixture patches the praw.Reddit class to return a mock instance,
+    allowing tests to verify Reddit client behavior without making actual API calls.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for patching
+
+    Yields:
+        Mock: Mocked PRAW Reddit instance
+    """
+    from unittest.mock import Mock
+    mock_instance = Mock()
+    mock_instance.user.me.return_value = Mock(name="test_user")
+    with monkeypatch.context() as m:
+        m.setattr("praw.Reddit", Mock(return_value=mock_instance))
+        yield mock_instance
+
+
 # Test configuration markers
 def pytest_configure(config):
     """
