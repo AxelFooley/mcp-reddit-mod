@@ -37,11 +37,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans in 2 waves
 
 **Plan List:**
-- [ ] 01-00-PLAN.md — Test infrastructure foundation (Wave 0)
-- [ ] 01-01-PLAN.md — FastMCP server with HTTP transport and metadata (Wave 1)
-- [ ] 01-02a-PLAN.md — Docker build infrastructure (Wave 1)
-- [ ] 01-02b-PLAN.md — Docker deployment configuration (Wave 1)
-- [ ] 01-03-PLAN.md — Project documentation and git setup (Wave 2)
+- [x] 01-00-PLAN.md — Test infrastructure foundation (Wave 0)
+- [x] 01-01-PLAN.md — FastMCP server with HTTP transport and metadata (Wave 1)
+- [x] 01-02a-PLAN.md — Docker build infrastructure (Wave 1)
+- [x] 01-02b-PLAN.md — Docker deployment configuration (Wave 1)
+- [x] 01-03-PLAN.md — Project documentation and git setup (Wave 2)
 
 ### Phase 2: Reddit Integration
 
@@ -80,7 +80,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   6. PRAW exceptions propagate to AI agent with error details but without credential information
   7. All PRAW API calls complete within timeout period (no indefinite hangs)
 
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
+
+**Plan List:**
+- [ ] 03-00-PLAN.md — Test infrastructure foundation (Wave 0)
+- [ ] 03-01-PLAN.md — Core moderation tools with validation and sanitization (Wave 1)
+- [ ] 03-02-PLAN.md — User history, timeout protection, and error propagation (Wave 2)
 
 ### Phase 4: Production Deployment
 
@@ -108,5 +113,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. MCP Server Foundation | 5/5 | Complete | 2026-03-11 |
 | 2. Reddit Integration | 2/2 | Complete | 2026-03-11 |
-| 3. Moderation Tools | 0/TBD | Not started | - |
+| 3. Moderation Tools | 0/3 | Not started | - |
 | 4. Production Deployment | 0/TBD | Not started | - |
