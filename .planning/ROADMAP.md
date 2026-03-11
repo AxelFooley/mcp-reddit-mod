@@ -60,8 +60,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans in 2 waves
 
 **Plan List:**
-- [ ] 02-00-PLAN.md — Test infrastructure foundation (Wave 0)
-- [ ] 02-01-PLAN.md — PRAW client with environment auth and singleton pattern (Wave 1)
+- [x] 02-00-PLAN.md — Test infrastructure foundation (Wave 0)
+- [x] 02-01-PLAN.md — PRAW client with environment auth and singleton pattern (Wave 1)
 
 ### Phase 3: Moderation Tools
 
@@ -107,6 +107,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. MCP Server Foundation | 5/5 | Complete | 2026-03-11 |
-| 2. Reddit Integration | 0/2 | Planning complete | - |
+| 2. Reddit Integration | 2/2 | Complete | 2026-03-11 |
 | 3. Moderation Tools | 0/TBD | Not started | - |
 | 4. Production Deployment | 0/TBD | Not started | - |
