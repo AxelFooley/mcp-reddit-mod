@@ -97,6 +97,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MCPF-03 | Phase 1 | Pending |
 | MCPF-04 | Phase 1 | Pending |
 | MCPF-05 | Phase 1 | Pending |
+| DEPL-01 | Phase 1 | Pending |
+| DEPL-02 | Phase 1 | Pending |
+| DEPL-03 | Phase 1 | Pending |
+| DEPL-04 | Phase 1 | Pending |
 | REDI-01 | Phase 2 | Pending |
 | REDI-02 | Phase 2 | Pending |
 | REDI-03 | Phase 3 | Pending |
@@ -108,10 +112,6 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MODT-05 | Phase 3 | Pending |
 | SAFE-01 | Phase 3 | Pending |
 | SAFE-02 | Phase 3 | Pending |
-| DEPL-01 | Phase 4 | Pending |
-| DEPL-02 | Phase 4 | Pending |
-| DEPL-03 | Phase 4 | Pending |
-| DEPL-04 | Phase 4 | Pending |
 | DEPL-05 | Phase 4 | Pending |
 | CICD-01 | Phase 4 | Pending |
 | CICD-02 | Phase 4 | Pending |
@@ -125,4 +125,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-03-11*
-*Last updated: 2025-03-11 after initial definition*
+*Last updated: 2025-03-11 after roadmap creation*
