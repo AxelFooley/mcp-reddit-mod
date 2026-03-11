@@ -14,13 +14,15 @@ Key features:
 """
 
 import re
+
 import praw
+
 from src.config import (
     REDDIT_CLIENT_ID,
     REDDIT_CLIENT_SECRET,
-    REDDIT_USERNAME,
     REDDIT_PASSWORD,
     REDDIT_USER_AGENT,
+    REDDIT_USERNAME,
 )
 
 # Module-level singleton instance

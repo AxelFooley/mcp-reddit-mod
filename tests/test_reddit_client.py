@@ -7,8 +7,9 @@ REQUIREMENTS.md. Tests are organized by requirement ID for traceability.
 Test stubs created in Wave 0 (02-00-PLAN.md) - implementations in Wave 1 (02-01-PLAN.md).
 """
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
 
 
 class TestRedditClientInitialization:
@@ -67,7 +68,7 @@ class TestRedditClientInitialization:
         """
         from src.reddit_client import get_reddit_client
 
-        client = get_reddit_client()
+        get_reddit_client()
 
         # Verify script app auth (username/password provided)
         mock_reddit_class = praw_mock['class']
@@ -188,7 +189,13 @@ class TestRedditClientErrors:
         """
         # Clear all Reddit credentials from environment
         import os
-        reddit_vars = ['REDDIT_CLIENT_ID', 'REDDIT_CLIENT_SECRET', 'REDDIT_USERNAME', 'REDDIT_PASSWORD']
+
+        reddit_vars = [
+            'REDDIT_CLIENT_ID',
+            'REDDIT_CLIENT_SECRET',
+            'REDDIT_USERNAME',
+            'REDDIT_PASSWORD',
+        ]
         original_values = {var: os.getenv(var) for var in reddit_vars}
 
         # Delete environment variables

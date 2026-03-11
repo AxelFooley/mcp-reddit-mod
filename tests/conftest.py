@@ -5,9 +5,9 @@ This module provides common fixtures and configuration for testing
 the italia-career-mod MCP server implementation.
 """
 
-import pytest
 import asyncio
-from typing import AsyncGenerator
+
+import pytest
 
 # Enable anyio for async test support
 pytest_plugins = ["anyio"]
