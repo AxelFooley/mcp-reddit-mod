@@ -219,3 +219,138 @@ class TestRedditClientErrors:
             for var, val in original_values.items():
                 if val is not None:
                     os.environ[var] = val
+
+
+class TestRedditClientTimeout:
+    """
+    Test suite for REDI-04: Timeout Protection.
+
+    Verifies that the PRAW client is configured with request_timeout
+    to prevent indefinite hangs on API calls.
+    """
+
+    @pytest.mark.unit
+    def test_praw_client_has_request_timeout(self, mock_reddit_credentials, praw_mock):
+        """
+        REDI-04: PRAW client initialized with request_timeout=30.
+
+        Expected behavior (Wave 2):
+        - PRAW Reddit instance created with request_timeout parameter
+        - Default timeout value is 30 seconds
+        - Timeout prevents indefinite hangs on HTTP requests
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        from src.reddit_client import get_reddit_client
+
+        # Create client
+        get_reddit_client()
+
+        # Verify PRAW was called with request_timeout
+        mock_reddit_class = praw_mock['class']
+        assert mock_reddit_class.called
+        call_kwargs = mock_reddit_class.call_args[1]
+        assert 'request_timeout' in call_kwargs
+        assert call_kwargs['request_timeout'] == 30
+
+    @pytest.mark.unit
+    def test_timeout_configurable_via_env(self, mock_reddit_credentials):
+        """
+        REDI-04: Timeout value is configurable via environment variable.
+
+        Expected behavior (Wave 2):
+        - REDDIT_REQUEST_TIMEOUT environment variable overrides default
+        - Value must be positive integer
+        - Used when creating PRAW instance
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import importlib
+        import os
+        import sys
+
+        # Set custom timeout via environment
+        original_timeout = os.getenv('REDDIT_REQUEST_TIMEOUT')
+        os.environ['REDDIT_REQUEST_TIMEOUT'] = '60'
+
+        try:
+            # Remove config module from cache to force reload
+            if 'src.config' in sys.modules:
+                del sys.modules['src.config']
+            if 'src.reddit_client' in sys.modules:
+                del sys.modules['src.reddit_client']
+
+            # Mock PRAW to verify the timeout value
+            mock_praw = Mock()
+            mock_instance = Mock()
+            mock_instance.user.me.return_value = Mock(name="test_user")
+            mock_praw.Reddit.return_value = mock_instance
+
+            with patch('praw.Reddit', mock_praw.Reddit):
+                # Import fresh modules with new env var
+                from src.reddit_client import get_reddit_client
+
+                get_reddit_client()
+
+                # Verify custom timeout was used
+                call_kwargs = mock_praw.Reddit.call_args[1]
+                assert call_kwargs['request_timeout'] == 60
+        finally:
+            # Restore original value
+            if original_timeout is None:
+                os.environ.pop('REDDIT_REQUEST_TIMEOUT', None)
+            else:
+                os.environ['REDDIT_REQUEST_TIMEOUT'] = original_timeout
+
+            # Clean up modules
+            if 'src.config' in sys.modules:
+                del sys.modules['src.config']
+            if 'src.reddit_client' in sys.modules:
+                del sys.modules['src.reddit_client']
+
+    @pytest.mark.unit
+    def test_invalid_timeout_raises_value_error(self, mock_reddit_credentials):
+        """
+        REDI-04: Client creation fails gracefully if timeout is invalid.
+
+        Expected behavior (Wave 2):
+        - Invalid timeout values raise ValueError
+        - Timeout must be positive integer
+        - Timeout must be reasonable (<= 600 seconds / 10 minutes)
+        - Error message is clear and actionable
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import os
+        import sys
+
+        # Test cases for invalid timeouts
+        invalid_values = ['-1', '0', '601', 'invalid', '1.5']
+
+        for invalid_val in invalid_values:
+            original_timeout = os.getenv('REDDIT_REQUEST_TIMEOUT')
+            os.environ['REDDIT_REQUEST_TIMEOUT'] = invalid_val
+
+            try:
+                # Remove modules from cache to force reload
+                if 'src.config' in sys.modules:
+                    del sys.modules['src.config']
+                if 'src.reddit_client' in sys.modules:
+                    del sys.modules['src.reddit_client']
+
+                # Should raise ValueError for invalid timeout
+                with pytest.raises(ValueError, match=r"(?i)timeout|invalid"):
+                    from src.reddit_client import get_reddit_client
+                    get_reddit_client()
+            finally:
+                # Restore original value
+                if original_timeout is None:
+                    os.environ.pop('REDDIT_REQUEST_TIMEOUT', None)
+                else:
+                    os.environ['REDDIT_REQUEST_TIMEOUT'] = original_timeout
+
+                # Clean up modules
+                if 'src.config' in sys.modules:
+                    del sys.modules['src.config']
+                if 'src.reddit_client' in sys.modules:
+                    del sys.modules['src.reddit_client']

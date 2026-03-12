@@ -21,6 +21,7 @@ from src.config import (
     REDDIT_CLIENT_ID,
     REDDIT_CLIENT_SECRET,
     REDDIT_PASSWORD,
+    REDDIT_REQUEST_TIMEOUT,
     REDDIT_USER_AGENT,
     REDDIT_USERNAME,
 )
@@ -105,6 +106,8 @@ def get_reddit_client() -> praw.Reddit:
             user_agent=REDDIT_USER_AGENT,
             # Disable read_only mode - we need mod access
             read_only=False,
+            # Set HTTP request timeout (REDI-04)
+            request_timeout=REDDIT_REQUEST_TIMEOUT,
         )
 
         # Verify authentication worked (makes a lightweight API call)

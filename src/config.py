@@ -41,6 +41,23 @@ REDDIT_USER_AGENT = os.getenv(
     f"italia-career-mod/{SERVER_VERSION} by {REDDIT_USERNAME or 'unknown'}"
 )
 
+# Reddit API request timeout (REDI-04)
+# Default 30 seconds, configurable via REDDIT_REQUEST_TIMEOUT environment variable
+# Must be positive integer between 1 and 600 seconds (10 minutes max)
+_REDDIT_REQUEST_TIMEOUT_RAW = os.getenv("REDDIT_REQUEST_TIMEOUT", "30")
+
+try:
+    REDDIT_REQUEST_TIMEOUT = int(_REDDIT_REQUEST_TIMEOUT_RAW)
+    if REDDIT_REQUEST_TIMEOUT <= 0:
+        raise ValueError(f"REDDIT_REQUEST_TIMEOUT must be positive (got {REDDIT_REQUEST_TIMEOUT})")
+    if REDDIT_REQUEST_TIMEOUT > 600:
+        raise ValueError(f"REDDIT_REQUEST_TIMEOUT must be <= 600 seconds (got {REDDIT_REQUEST_TIMEOUT})")
+except ValueError as e:
+    raise ValueError(
+        f"Invalid REDDIT_REQUEST_TIMEOUT value: '{_REDDIT_REQUEST_TIMEOUT_RAW}'. "
+        f"Must be an integer between 1 and 600 seconds. {e}"
+    )
+
 # =============================================================================
 # Validation Functions
 # =============================================================================
