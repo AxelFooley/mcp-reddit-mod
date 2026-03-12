@@ -848,11 +848,11 @@ class TestErrorPropagation:
     """
 
     @pytest.mark.unit
-    def test_praw_exception_propagates(self):
+    def test_praw_exception_propagates(self, praw_mock, mock_reddit_credentials):
         """
         REDI-03: PRAW exceptions propagate with error details.
 
-        Expected behavior (Wave 2):
+        Expected behavior (Wave 3):
         - System allows PRAW exceptions to propagate to caller
         - Exception type preserved (PRAWException, RedditAPIException, etc.)
         - Error details included but sanitized
@@ -860,14 +860,30 @@ class TestErrorPropagation:
 
         Reference: REQUIREMENTS.md REDI-03
         """
-        pytest.skip(reason="Wave 2 - Error propagation")
+        from praw.exceptions import PRAWException
+
+        from src.modtools import get_modqueue
+
+        # Configure mock to raise PRAW exception
+        praw_mock["instance"].subreddit.return_value.mod.modqueue.side_effect = PRAWException(
+            "HTTP 403: Forbidden"
+        )
+
+        # Should raise PRAWException
+        with pytest.raises(PRAWException) as exc_info:
+            get_modqueue("testsub")
+
+        # Exception should have sanitized error message
+        error_msg = str(exc_info.value)
+        assert "Failed to fetch modqueue" in error_msg
+        # Credentials should be sanitized if present
 
     @pytest.mark.unit
-    def test_praw_forbidden_propagates(self):
+    def test_praw_forbidden_propagates(self, praw_mock, mock_reddit_credentials):
         """
         REDI-03: 403 Forbidden errors propagate correctly.
 
-        Expected behavior (Wave 2):
+        Expected behavior (Wave 3):
         - Permission errors (403) propagate as appropriate exception
         - Error indicates insufficient permissions for action
         - Error message sanitized (no credentials leaked)
@@ -875,14 +891,31 @@ class TestErrorPropagation:
 
         Reference: REQUIREMENTS.md REDI-03
         """
-        pytest.skip(reason="Wave 2 - Error propagation")
+        from unittest.mock import Mock
+
+        from praw.exceptions import PRAWException
+
+        from src.modtools import approve_item
+
+        # Create a mock that simulates 403 error
+        mock_comment = Mock()
+        mock_comment.mod.approve.side_effect = PRAWException("HTTP 403: Forbidden - insufficient permissions")
+        praw_mock["instance"].comment.return_value = mock_comment
+
+        # Should raise PRAWException
+        with pytest.raises(PRAWException) as exc_info:
+            approve_item("t1_abc123")
+
+        # Verify error message includes context
+        error_msg = str(exc_info.value)
+        assert "Failed to approve" in error_msg
 
     @pytest.mark.unit
-    def test_praw_not_found_propagates(self):
+    def test_praw_not_found_propagates(self, praw_mock, mock_reddit_credentials):
         """
         REDI-03: 404 Not Found errors propagate correctly.
 
-        Expected behavior (Wave 2):
+        Expected behavior (Wave 3):
         - Not found errors (404) propagate as appropriate exception
         - Error indicates resource doesn't exist
         - Error message sanitized
@@ -890,14 +923,31 @@ class TestErrorPropagation:
 
         Reference: REQUIREMENTS.md REDI-03
         """
-        pytest.skip(reason="Wave 2 - Error propagation")
+        from unittest.mock import Mock
+
+        from praw.exceptions import PRAWException
+
+        from src.modtools import remove_item
+
+        # Create a mock that simulates 404 error
+        mock_comment = Mock()
+        mock_comment.mod.remove.side_effect = PRAWException("HTTP 404: Not Found")
+        praw_mock["instance"].comment.return_value = mock_comment
+
+        # Should raise PRAWException
+        with pytest.raises(PRAWException) as exc_info:
+            remove_item("t1_abc123")
+
+        # Verify error message includes context
+        error_msg = str(exc_info.value)
+        assert "Failed to remove" in error_msg
 
     @pytest.mark.unit
-    def test_praw_exception_sanitized(self):
+    def test_praw_exception_sanitized(self, praw_mock, mock_reddit_credentials):
         """
         REDI-03: PRAW exception messages are sanitized.
 
-        Expected behavior (Wave 2):
+        Expected behavior (Wave 3):
         - All PRAW exceptions caught and sanitized before propagation
         - Credential values removed from error messages
         - Subreddit names redacted for privacy
@@ -905,7 +955,31 @@ class TestErrorPropagation:
 
         Reference: REQUIREMENTS.md REDI-03, SAFE-02
         """
-        pytest.skip(reason="Wave 2 - Error propagation")
+        from unittest.mock import Mock
+
+        from praw.exceptions import PRAWException
+
+        from src.modtools import ban_user
+
+        # Create a mock that raises error with sensitive info
+        mock_banned = Mock()
+        mock_banned.add.side_effect = PRAWException(
+            "Failed to ban user real_user in r/secret_subreddit: credentials invalid"
+        )
+        praw_mock["instance"].subreddit.return_value.banned = mock_banned
+
+        # Should raise PRAWException with sanitized message
+        with pytest.raises(PRAWException) as exc_info:
+            ban_user("secret_subreddit", "real_user", "spam")
+
+        error_msg = str(exc_info.value)
+
+        # Sensitive info should be redacted
+        assert "real_user" not in error_msg or "***" in error_msg
+        assert "secret_subreddit" not in error_msg or "SUBREDDIT" in error_msg
+
+        # Error should still be actionable
+        assert "Failed to ban" in error_msg or "ban" in error_msg.lower()
 
 
 class TestTimeout:
