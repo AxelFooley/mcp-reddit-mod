@@ -12,9 +12,9 @@ Build an MCP server that enables AI-assisted Reddit moderation with human oversi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: MCP Server Foundation** - FastMCP server with HTTP transport, Docker deployment, and error handling
-- [ ] **Phase 2: Reddit Integration** - PRAW client initialization, authentication, and API wrapper
-- [ ] **Phase 3: Moderation Tools** - All moderation tools with safety validation and timeout protection
+- [x] **Phase 1: MCP Server Foundation** - FastMCP server with HTTP transport, Docker deployment, and error handling
+- [x] **Phase 2: Reddit Integration** - PRAW client initialization, authentication, and API wrapper
+- [ ] **Phase 3: Moderation Tools** - All moderation tools with safety validation and timeout protection (IN PROGRESS)
 - [ ] **Phase 4: Production Deployment** - Docker configuration, CI/CD pipeline, and production validation
 
 ## Phase Details
@@ -83,10 +83,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 4 plans in 3 waves
 
 **Plan List:**
-- [ ] 03-00-PLAN.md — Test infrastructure foundation (Wave 0)
-- [ ] 03-01-PLAN.md — Core moderation tools with validation and sanitization (Wave 1)
+- [x] 03-00-PLAN.md — Test infrastructure foundation (Wave 0)
+- [x] 03-01-PLAN.md — Core moderation tools with validation and sanitization (Wave 1)
 - [ ] 03-02-PLAN.md — Timeout protection for all PRAW API calls (Wave 2)
-- [ ] 03-03-PLAN.md — User history fetching and error propagation (Wave 3)
+- [ ] 03-03-PLAN.md — User history fetching and error propagation (Wave 2)
 
 ### Phase 4: Production Deployment
 
@@ -114,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. MCP Server Foundation | 5/5 | Complete | 2026-03-11 |
 | 2. Reddit Integration | 2/2 | Complete | 2026-03-11 |
-| 3. Moderation Tools | 0/4 | Not started | - |
+| 3. Moderation Tools | 2/4 | In Progress | 2026-03-12 |
 | 4. Production Deployment | 0/TBD | Not started | - |
