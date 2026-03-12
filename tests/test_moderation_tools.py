@@ -324,7 +324,7 @@ class TestBan:
     """
 
     @pytest.mark.unit
-    def test_ban_user_permanent(self):
+    def test_ban_user_permanent(self, praw_mock, mock_reddit_credentials):
         """
         MODT-04: Permanent ban (duration_days=0).
 
@@ -336,10 +336,30 @@ class TestBan:
 
         Reference: REQUIREMENTS.md MODT-04
         """
-        pytest.skip(reason="Wave 1 - Ban implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import ban_user
+
+        # Configure mock subreddit.banned.add() method
+        mock_banned = Mock()
+        mock_banned.add.return_value = None
+        praw_mock["instance"].subreddit.return_value.banned = mock_banned
+
+        # Ban user permanently
+        ban_user("testsub", "spam_user", "Spamming", duration_days=0)
+
+        # Verify PRAW methods were called correctly
+        praw_mock["instance"].subreddit.assert_called_once_with("testsub")
+        # duration=None means permanent ban in PRAW
+        mock_banned.add.assert_called_once_with(
+            "spam_user",
+            ban_reason="Spamming",
+            duration=None,
+            note="Banned via italia-career-mod MCP tool",
+        )
 
     @pytest.mark.unit
-    def test_ban_user_temporary(self):
+    def test_ban_user_temporary(self, praw_mock, mock_reddit_credentials):
         """
         MODT-04: Temporary ban with specified duration.
 
@@ -351,10 +371,30 @@ class TestBan:
 
         Reference: REQUIREMENTS.md MODT-04
         """
-        pytest.skip(reason="Wave 1 - Ban implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import ban_user
+
+        # Configure mock subreddit.banned.add() method
+        mock_banned = Mock()
+        mock_banned.add.return_value = None
+        praw_mock["instance"].subreddit.return_value.banned = mock_banned
+
+        # Ban user temporarily
+        ban_user("testsub", "spam_user", "Spamming", duration_days=7)
+
+        # Verify PRAW methods were called correctly
+        praw_mock["instance"].subreddit.assert_called_once_with("testsub")
+        # duration=7 means 7-day temporary ban
+        mock_banned.add.assert_called_once_with(
+            "spam_user",
+            ban_reason="Spamming",
+            duration=7,
+            note="Banned via italia-career-mod MCP tool",
+        )
 
     @pytest.mark.unit
-    def test_ban_user_invalid_duration(self):
+    def test_ban_user_invalid_duration(self, praw_mock, mock_reddit_credentials):
         """
         MODT-04: Ban validates duration parameter.
 
@@ -365,10 +405,14 @@ class TestBan:
 
         Reference: REQUIREMENTS.md MODT-04
         """
-        pytest.skip(reason="Wave 1 - Ban implementation")
+        from src.modtools import ban_user
+
+        # Negative duration should raise ValueError
+        with pytest.raises(ValueError, match="duration_days must be non-negative"):
+            ban_user("testsub", "spam_user", "Spamming", duration_days=-1)
 
     @pytest.mark.unit
-    def test_ban_user_invalid_username(self):
+    def test_ban_user_invalid_username(self, praw_mock, mock_reddit_credentials):
         """
         MODT-04: Ban handles non-existent users.
 
@@ -380,7 +424,18 @@ class TestBan:
 
         Reference: REQUIREMENTS.md MODT-04
         """
-        pytest.skip(reason="Wave 1 - Ban implementation")
+        from praw.exceptions import PRAWException
+
+        from src.modtools import ban_user
+
+        # Configure mock to raise PRAW exception
+        praw_mock["instance"].subreddit.return_value.banned.add.side_effect = PRAWException(
+            "User nonexistent not found"
+        )
+
+        # Should raise exception with sanitized error
+        with pytest.raises(PRAWException):
+            ban_user("testsub", "nonexistent", "Rule violation")
 
 
 class TestUserHistory:

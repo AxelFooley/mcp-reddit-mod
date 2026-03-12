@@ -318,3 +318,65 @@ def remove_item(thing_id: str, reason: str = "", spam: bool = False) -> None:
     except PRAWException as e:
         sanitized_msg = sanitize_moderation_error(e)
         raise type(e)(f"Failed to remove {thing_id}: {sanitized_msg}") from e
+
+
+# =============================================================================
+# User Banning (MODT-04)
+# =============================================================================
+
+def ban_user(
+    subreddit: str,
+    username: str,
+    reason: str,
+    duration_days: int = 0,
+) -> None:
+    """
+    Ban a user from a subreddit.
+
+    Bans prevent users from posting and commenting in the subreddit.
+    Permanent bans (duration_days=0) last until manually revoked.
+    Temporary bans (duration_days>0) automatically expire after the
+    specified number of days.
+
+    Args:
+        subreddit: Name of the subreddit (without r/ prefix)
+        username: Username to ban (without u/ prefix)
+        reason: Ban reason for mod notes and user message
+        duration_days: Ban duration in days (0=permanent, >0=temporary)
+
+    Raises:
+        ValueError: If duration_days is negative
+        PRAWException: If API call fails (with sanitized error message)
+
+    Examples:
+        >>> ban_user("testsub", "spam_user", "Spamming")  # Permanent
+        >>> ban_user("testsub", "troll", "Harassment", duration_days=7)  # 7 days
+    """
+    # Validate duration is non-negative
+    if duration_days < 0:
+        raise ValueError(
+            f"duration_days must be non-negative (got {duration_days}). "
+            "Use 0 for permanent ban, or positive integer for days."
+        )
+
+    # Convert duration: 0 -> None (permanent), >0 -> integer days
+    duration = None if duration_days == 0 else duration_days
+
+    reddit = get_reddit_client()
+
+    try:
+        subreddit_obj = reddit.subreddit(subreddit)
+
+        # Call ban API
+        subreddit_obj.banned.add(
+            username,
+            ban_reason=reason,
+            duration=duration,
+            note="Banned via italia-career-mod MCP tool",
+        )
+
+    except PRAWException as e:
+        sanitized_msg = sanitize_moderation_error(
+            e, context={"subreddit": subreddit, "username": username}
+        )
+        raise type(e)(f"Failed to ban u/{username} in r/{subreddit}: {sanitized_msg}") from e
