@@ -489,7 +489,11 @@ def get_user_history(username: str, subreddit: str, limit: int = 100) -> list[di
                 # Filter by subreddit
                 if sub.subreddit and str(sub.subreddit).lower() == subreddit_lower:
                     # Truncate selftext to 500 chars
-                    selftext = sub.selftext[:500] if hasattr(sub, 'selftext') and sub.selftext else ""
+                    selftext = (
+                        sub.selftext[:500]
+                        if hasattr(sub, 'selftext') and sub.selftext
+                        else ""
+                    )
                     submissions.append({
                         "thing_id": sub.fullname,
                         "type": "submission",
@@ -534,4 +538,6 @@ def get_user_history(username: str, subreddit: str, limit: int = 100) -> list[di
         sanitized_msg = sanitize_moderation_error(
             e, context={"subreddit": subreddit, "username": username}
         )
-        raise type(e)(f"Failed to fetch history for u/{username} in r/{subreddit}: {sanitized_msg}") from e
+        raise type(e)(
+            f"Failed to fetch history for u/{username} in r/{subreddit}: {sanitized_msg}"
+        ) from e

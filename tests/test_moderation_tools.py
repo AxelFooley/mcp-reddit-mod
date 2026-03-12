@@ -899,7 +899,9 @@ class TestErrorPropagation:
 
         # Create a mock that simulates 403 error
         mock_comment = Mock()
-        mock_comment.mod.approve.side_effect = PRAWException("HTTP 403: Forbidden - insufficient permissions")
+        mock_comment.mod.approve.side_effect = PRAWException(
+            "HTTP 403: Forbidden - insufficient permissions"
+        )
         praw_mock["instance"].comment.return_value = mock_comment
 
         # Should raise PRAWException
@@ -1003,7 +1005,6 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        import time
         from src.modtools import with_timeout
 
         # Apply timeout wrapper to a fast function
@@ -1029,6 +1030,7 @@ class TestTimeout:
         Reference: REQUIREMENTS.md REDI-04
         """
         import time
+
         from src.modtools import with_timeout
 
         # Apply timeout wrapper to a slow function
@@ -1056,6 +1058,7 @@ class TestTimeout:
         """
         import time
         from unittest.mock import patch
+
         from src.modtools import with_timeout
 
         # Apply timeout wrapper to a slow function
@@ -1085,6 +1088,7 @@ class TestTimeout:
         Reference: REQUIREMENTS.md REDI-04
         """
         import time
+
         from src.modtools import with_timeout
 
         @with_timeout(timeout_seconds=1)
