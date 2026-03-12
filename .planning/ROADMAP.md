@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: MCP Server Foundation** - FastMCP server with HTTP transport, Docker deployment, and error handling
 - [x] **Phase 2: Reddit Integration** - PRAW client initialization, authentication, and API wrapper
 - [ ] **Phase 3: Moderation Tools** - All moderation tools with safety validation and timeout protection (IN PROGRESS)
-- [ ] **Phase 4: Production Deployment** - Docker configuration, CI/CD pipeline, and production validation
+- [ ] **Phase 4: Production Deployment** - CI/CD pipeline with GitHub Actions, GHCR publishing, and production validation
 
 ## Phase Details
 
@@ -103,7 +103,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. CI pushes Docker image to ghcr.io/axelfooley when main branch builds succeed
   5. Server can be tested against real Reddit API using MCP Inspector or equivalent client
 
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
+
+**Plan List:**
+- [ ] 04-01-PLAN.md — Add mypy to dev dependencies and configure (Wave 1)
+- [ ] 04-02-PLAN.md — Create GitHub Actions CI workflow with lint, test, and build jobs (Wave 1)
+- [ ] 04-03-PLAN.md — Add GHCR push functionality and production validation (Wave 2)
 
 ## Progress
 
@@ -115,4 +120,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. MCP Server Foundation | 5/5 | Complete | 2026-03-11 |
 | 2. Reddit Integration | 2/2 | Complete | 2026-03-11 |
 | 3. Moderation Tools | 2/4 | In Progress | 2026-03-12 |
-| 4. Production Deployment | 0/TBD | Not started | - |
+| 4. Production Deployment | 0/3 | Not started | - |
