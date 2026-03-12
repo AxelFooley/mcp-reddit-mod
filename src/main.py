@@ -1,5 +1,5 @@
 """
-Main entry point for italia-career-mod MCP server.
+Main entry point for mcp-reddit-mod MCP server.
 
 This module loads configuration and starts the FastMCP server with
 streamable-http transport for Docker deployment.
@@ -23,7 +23,7 @@ def main():
     """
     # Load environment configuration
     config = load_config()
-    
+
     # Validate Reddit credentials
     # Note: Phase 1 doesn't use Reddit, so we only warn if credentials are missing
     missing = validate_reddit_credentials()
@@ -31,22 +31,23 @@ def main():
         print(f"Warning: Missing Reddit credentials: {', '.join(missing)}")
         print("These are required for Phase 3 but optional for Phase 1.")
         print()
-    
+
+    # Set environment variables for FastMCP to pick up
+    import os
+    os.environ["MCP_HOST"] = SERVER_HOST
+    os.environ["MCP_PORT"] = str(SERVER_PORT)
+
     # Print server startup information
     print(f"Starting {config['name']} v{config['version']}")
     print(f"Description: {config['description']}")
-    print(f"Binding to {config['host']}:{config['port']}")
+    print(f"Binding to {SERVER_HOST}:{SERVER_PORT}")
     print(f"Transport: streamable-http")
     print()
-    
+
     # Start the MCP server with streamable-http transport
-    # host="0.0.0.0" allows Docker container external access (MCPF-02)
-    # port=8000 is the standard MCP HTTP endpoint port
-    # transport="streamable-http" provides bidirectional JSON-RPC over HTTP (MCPF-01)
+    # FastMCP reads MCP_HOST and MCP_PORT from environment variables
     mcp.run(
-        transport="streamable-http",
-        host=SERVER_HOST,
-        port=SERVER_PORT
+        transport="streamable-http"
     )
 
 
