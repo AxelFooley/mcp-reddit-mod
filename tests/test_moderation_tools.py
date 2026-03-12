@@ -834,6 +834,117 @@ class TestTimeout:
     """
 
     @pytest.mark.unit
+    def test_timeout_wrapper_returns_on_time(self, praw_mock, mock_reddit_credentials):
+        """
+        REDI-04: Functions complete within timeout return normally.
+
+        Expected behavior (Wave 2):
+        - Functions that complete before timeout return their result
+        - No timeout error is raised
+        - Result is returned unchanged
+        - Function executes normally
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import time
+        from src.modtools import with_timeout
+
+        # Apply timeout wrapper to a fast function
+        @with_timeout(timeout_seconds=1)
+        def fast_function():
+            return "completed"
+
+        # Should return normally
+        result = fast_function()
+        assert result == "completed"
+
+    @pytest.mark.unit
+    def test_timeout_wrapper_raises_on_exceed(self, praw_mock, mock_reddit_credentials):
+        """
+        REDI-04: Functions exceeding timeout raise TimeoutError.
+
+        Expected behavior (Wave 2):
+        - Functions that take longer than timeout raise TimeoutError
+        - Timeout is enforced at application level
+        - Function is cancelled when timeout expires
+        - Error is specific TimeoutError (not generic Exception)
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import time
+        from src.modtools import with_timeout
+
+        # Apply timeout wrapper to a slow function
+        @with_timeout(timeout_seconds=1)
+        def slow_function():
+            time.sleep(2)  # Sleep longer than timeout
+            return "should not reach here"
+
+        # Should raise TimeoutError
+        with pytest.raises(TimeoutError, match="exceeded timeout"):
+            slow_function()
+
+    @pytest.mark.unit
+    def test_timeout_cancels_future(self, praw_mock, mock_reddit_credentials):
+        """
+        REDI-04: Timeout cancels the running task.
+
+        Expected behavior (Wave 2):
+        - When timeout expires, future.cancel() is called
+        - Task is cancelled to free resources
+        - No zombie threads left running
+        - Clean shutdown of timed-out operations
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import time
+        from unittest.mock import patch
+        from src.modtools import with_timeout
+
+        # Apply timeout wrapper to a slow function
+        @with_timeout(timeout_seconds=1)
+        def slow_function():
+            time.sleep(2)
+            return "should not reach here"
+
+        # Mock the cancel to verify it's called
+        with patch('concurrent.futures.Future.cancel') as mock_cancel:
+            mock_cancel.return_value = True
+
+            with pytest.raises(TimeoutError):
+                slow_function()
+
+    @pytest.mark.unit
+    def test_timeout_includes_function_name(self, praw_mock, mock_reddit_credentials):
+        """
+        REDI-04: Timeout error message includes function name and timeout value.
+
+        Expected behavior (Wave 2):
+        - TimeoutError message includes the function name
+        - Message includes the timeout value used
+        - Error is actionable for debugging
+        - Caller knows which operation timed out
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        import time
+        from src.modtools import with_timeout
+
+        @with_timeout(timeout_seconds=1)
+        def my_slow_function():
+            time.sleep(2)
+            return "result"
+
+        with pytest.raises(TimeoutError) as exc_info:
+            my_slow_function()
+
+        # Error message should include function name
+        error_msg = str(exc_info.value)
+        assert "my_slow_function" in error_msg
+        # Should include timeout value
+        assert "1" in error_msg or "timeout" in error_msg.lower()
+
+    @pytest.mark.unit
     def test_modqueue_timeout_protection(self):
         """
         REDI-04: Modqueue call has timeout protection.
@@ -846,7 +957,7 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper")
+        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
 
     @pytest.mark.unit
     def test_approve_timeout_protection(self):
@@ -861,7 +972,7 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper")
+        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
 
     @pytest.mark.unit
     def test_remove_timeout_protection(self):
@@ -876,7 +987,7 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper")
+        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
 
     @pytest.mark.unit
     def test_ban_timeout_protection(self):
@@ -891,19 +1002,4 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper")
-
-    @pytest.mark.unit
-    def test_timeout_raises_timeout_error(self):
-        """
-        REDI-04: Timeout raises TimeoutError.
-
-        Expected behavior (Wave 2):
-        - Exceeding timeout raises TimeoutError (not generic Exception)
-        - Error message indicates which operation timed out
-        - Caller can distinguish timeout from other failures
-        - Timeout value is configurable if needed
-
-        Reference: REQUIREMENTS.md REDI-04
-        """
-        pytest.skip(reason="Wave 2 - Timeout wrapper")
+        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")

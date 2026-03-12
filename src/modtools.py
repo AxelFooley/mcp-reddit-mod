@@ -11,14 +11,66 @@ Key features:
 - Modqueue retrieval for content review (MODT-01)
 - Content approval and removal (MODT-02, MODT-03)
 - User banning with configurable duration (MODT-04)
+- Timeout protection for all API calls (REDI-04)
 """
 
+import concurrent.futures
 import re
-from typing import Optional
+from functools import wraps
+from typing import Callable, Optional, TypeVar
 
 from praw.exceptions import PRAWException
 
 from src.reddit_client import get_reddit_client, sanitize_error_message
+
+# =============================================================================
+# Timeout Protection (REDI-04)
+# =============================================================================
+
+# Default timeout for moderation operations (seconds)
+# Applied at application level via with_timeout decorator
+MODTOOLS_TIMEOUT = 30
+
+T = TypeVar('T')
+
+
+def with_timeout(timeout_seconds: int = MODTOOLS_TIMEOUT):
+    """
+    Decorator to wrap function with timeout protection.
+
+    This decorator uses ThreadPoolExecutor to run the function in a separate
+    thread and enforces a timeout. If the function doesn't complete within
+    the specified timeout, a TimeoutError is raised and the future is cancelled.
+
+    Args:
+        timeout_seconds: Maximum time to wait for function to complete (in seconds).
+                        Defaults to MODTOOLS_TIMEOUT (30 seconds).
+
+    Returns:
+        Callable: Decorated function with timeout protection.
+
+    Raises:
+        TimeoutError: If function execution exceeds timeout_seconds.
+
+    Examples:
+        >>> @with_timeout(timeout_seconds=10)
+        ... def slow_operation():
+        ...     return result
+    """
+    def decorator(func: Callable[..., T]) -> Callable[..., T]:
+        @wraps(func)
+        def wrapper(*args, **kwargs) -> T:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(func, *args, **kwargs)
+                try:
+                    return future.result(timeout=timeout_seconds)
+                except concurrent.futures.TimeoutError:
+                    future.cancel()
+                    raise TimeoutError(
+                        f"{func.__name__} exceeded timeout of {timeout_seconds} seconds"
+                    )
+        return wrapper
+    return decorator
 
 # =============================================================================
 # Thing ID Validation (SAFE-01)
