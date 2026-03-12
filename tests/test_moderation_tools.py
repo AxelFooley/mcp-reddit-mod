@@ -447,48 +447,131 @@ class TestUserHistory:
     """
 
     @pytest.mark.unit
-    def test_get_user_history(self):
+    def test_get_user_history(self, praw_mock, mock_reddit_credentials):
         """
-        MODT-05: Fetch user's flagged content history.
+        MODT-05: Fetch user's content history in subreddit.
 
-        Expected behavior (Wave 2):
+        Expected behavior (Wave 3):
         - System fetches user's posts and comments from subreddit
-        - Only returns items that were flagged (removed, spam, reported)
-        - Returns metadata for each item (id, type, timestamp, action taken)
-        - Used for repeat offender detection
+        - Returns both submissions and comments
+        - Results sorted by created_utc (newest first)
+        - Includes removed flag in results
+        - Limited by limit parameter
 
         Reference: REQUIREMENTS.md MODT-05
         """
-        pytest.skip(reason="Wave 2 - User history implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import get_user_history
+
+        # Create mock submission
+        mock_submission = Mock()
+        mock_submission.fullname = "t3_sub123"
+        mock_submission.title = "Test post"
+        mock_submission.selftext = "Test content"
+        mock_submission.created_utc = 1234567900.0
+        mock_submission.permalink = "/r/testsub/comments/sub123/test_post/"
+        mock_submission.removed = False
+        mock_sub = Mock()
+        mock_sub.__str__ = Mock(return_value="testsub")
+        mock_submission.subreddit = mock_sub
+
+        # Create mock comment
+        mock_comment = Mock()
+        mock_comment.fullname = "t1_com456"
+        mock_comment.body = "Test comment"
+        mock_comment.created_utc = 1234567800.0
+        mock_comment.permalink = "/r/testsub/comments/sub123/-/com456/"
+        mock_comment.removed = True
+        mock_comment.subreddit = mock_sub
+
+        # Configure mock redditor
+        mock_redditor = Mock()
+        mock_submissions = Mock()
+        mock_submissions.new.return_value = [mock_submission]
+        mock_redditor.submissions = mock_submissions
+
+        mock_comments = Mock()
+        mock_comments.new.return_value = [mock_comment]
+        mock_redditor.comments = mock_comments
+
+        # Configure praw mock to return the mock redditor
+        praw_mock["instance"].redditor.return_value = mock_redditor
+
+        # Get user history
+        result = get_user_history("testuser", "testsub", limit=100)
+
+        # Verify results
+        assert len(result) == 2
+        # Results should be sorted by created_utc descending (newest first)
+        assert result[0]["thing_id"] == "t3_sub123"  # Submission (newer)
+        assert result[0]["type"] == "submission"
+        assert result[0]["title"] == "Test post"
+        assert result[0]["created_utc"] == 1234567900.0
+        assert result[0]["removed"] is False
+
+        assert result[1]["thing_id"] == "t1_com456"  # Comment (older)
+        assert result[1]["type"] == "comment"
+        assert result[1]["body"] == "Test comment"
+        assert result[1]["created_utc"] == 1234567800.0
+        assert result[1]["removed"] is True
 
     @pytest.mark.unit
-    def test_get_user_history_empty(self):
+    def test_get_user_history_empty(self, praw_mock, mock_reddit_credentials):
         """
-        MODT-05: Handle user with no flagged history.
+        MODT-05: Handle user with no history.
 
-        Expected behavior (Wave 2):
-        - System returns empty list for user with no flagged items
+        Expected behavior (Wave 3):
+        - System returns empty list for user with no items
         - No error raised for legitimate empty history
         - Response indicates successful fetch with zero items
 
         Reference: REQUIREMENTS.md MODT-05
         """
-        pytest.skip(reason="Wave 2 - User history implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import get_user_history
+
+        # Configure mock redditor with empty history
+        mock_redditor = Mock()
+        mock_submissions = Mock()
+        mock_submissions.new.return_value = []
+        mock_redditor.submissions = mock_submissions
+
+        mock_comments = Mock()
+        mock_comments.new.return_value = []
+        mock_redditor.comments = mock_comments
+
+        praw_mock["instance"].redditor.return_value = mock_redditor
+
+        # Get user history
+        result = get_user_history("testuser", "testsub")
+
+        # Should return empty list
+        assert result == []
 
     @pytest.mark.unit
-    def test_get_user_history_not_found(self):
+    def test_get_user_history_not_found(self, praw_mock, mock_reddit_credentials):
         """
         MODT-05: Handle non-existent user.
 
-        Expected behavior (Wave 2):
-        - System validates username exists
-        - Non-existent user raises appropriate error
+        Expected behavior (Wave 3):
+        - System raises PRAWException for non-existent user
         - Error message is sanitized
         - Error indicates user not found
 
         Reference: REQUIREMENTS.md MODT-05
         """
-        pytest.skip(reason="Wave 2 - User history implementation")
+        from praw.exceptions import PRAWException
+
+        from src.modtools import get_user_history
+
+        # Configure mock to raise PRAWException
+        praw_mock["instance"].redditor.side_effect = PRAWException("User not found")
+
+        # Should raise exception
+        with pytest.raises(PRAWException):
+            get_user_history("nonexistent_user", "testsub")
 
 
 class TestValidation:

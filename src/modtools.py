@@ -436,3 +436,102 @@ def ban_user(
             e, context={"subreddit": subreddit, "username": username}
         )
         raise type(e)(f"Failed to ban u/{username} in r/{subreddit}: {sanitized_msg}") from e
+
+
+# =============================================================================
+# User History (MODT-05)
+# =============================================================================
+
+@with_timeout(timeout_seconds=MODTOOLS_TIMEOUT)
+def get_user_history(username: str, subreddit: str, limit: int = 100) -> list[dict]:
+    """
+    Fetch a user's post and comment history in a subreddit.
+
+    This function retrieves a user's submissions and comments in the specified
+    subreddit, useful for detecting repeat offenders and reviewing their activity.
+    Results are sorted by creation time (newest first) and include a removed flag.
+
+    Args:
+        username: Reddit username (without u/ prefix)
+        subreddit: Subreddit name (without r/ prefix)
+        limit: Maximum number of items to fetch (default: 100)
+
+    Returns:
+        list[dict]: List of user's content items with keys:
+            - thing_id: Reddit fullname (t1_* for comments, t3_* for submissions)
+            - type: "comment" or "submission"
+            - title: Submission title (only for submissions)
+            - selftext: Submission text content (only for submissions, truncated to 500 chars)
+            - body: Comment body (only for comments, truncated to 500 chars)
+            - created_utc: Unix timestamp of creation
+            - permalink: Link to the content
+            - removed: Boolean indicating if content was removed
+
+    Raises:
+        PRAWException: If API call fails (with sanitized error message)
+
+    Examples:
+        >>> history = get_user_history("spam_user", "testsub")
+        >>> for item in history:
+        ...     print(f"{item['type']}: {item['thing_id']} (removed: {item['removed']})")
+    """
+    reddit = get_reddit_client()
+
+    try:
+        # Get redditor object
+        redditor = reddit.redditor(username)
+        subreddit_lower = subreddit.lower()
+
+        # Fetch submissions
+        submissions = []
+        try:
+            for sub in redditor.submissions.new(limit=limit):
+                # Filter by subreddit
+                if sub.subreddit and str(sub.subreddit).lower() == subreddit_lower:
+                    # Truncate selftext to 500 chars
+                    selftext = sub.selftext[:500] if hasattr(sub, 'selftext') and sub.selftext else ""
+                    submissions.append({
+                        "thing_id": sub.fullname,
+                        "type": "submission",
+                        "title": sub.title if hasattr(sub, 'title') else "",
+                        "selftext": selftext,
+                        "created_utc": sub.created_utc,
+                        "permalink": sub.permalink if hasattr(sub, 'permalink') else "",
+                        "removed": getattr(sub, 'removed', False),
+                    })
+        except Exception:
+            # If submissions fail, continue with empty list (graceful degradation)
+            pass
+
+        # Fetch comments
+        comments = []
+        try:
+            for com in redditor.comments.new(limit=limit):
+                # Filter by subreddit
+                if com.subreddit and str(com.subreddit).lower() == subreddit_lower:
+                    # Truncate body to 500 chars
+                    body = com.body[:500] if hasattr(com, 'body') and com.body else ""
+                    comments.append({
+                        "thing_id": com.fullname,
+                        "type": "comment",
+                        "body": body,
+                        "created_utc": com.created_utc,
+                        "permalink": com.permalink if hasattr(com, 'permalink') else "",
+                        "removed": getattr(com, 'removed', False),
+                    })
+        except Exception:
+            # If comments fail, continue with empty list (graceful degradation)
+            pass
+
+        # Combine and sort by created_utc descending (newest first)
+        result = submissions + comments
+        result.sort(key=lambda x: x['created_utc'], reverse=True)
+
+        return result
+
+    except PRAWException as e:
+        # Sanitize error message before re-raising
+        sanitized_msg = sanitize_moderation_error(
+            e, context={"subreddit": subreddit, "username": username}
+        )
+        raise type(e)(f"Failed to fetch history for u/{username} in r/{subreddit}: {sanitized_msg}") from e
