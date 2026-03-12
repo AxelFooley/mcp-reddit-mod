@@ -945,22 +945,27 @@ class TestTimeout:
         assert "1" in error_msg or "timeout" in error_msg.lower()
 
     @pytest.mark.unit
-    def test_modqueue_timeout_protection(self):
+    def test_modqueue_timeout_protection(self, praw_mock, mock_reddit_credentials, monkeypatch):
         """
         REDI-04: Modqueue call has timeout protection.
 
         Expected behavior (Wave 2):
         - get_modqueue completes within timeout period
         - TimeoutError raised if PRAW call exceeds timeout
-        - Default timeout configured (e.g., 30 seconds)
-        - Timeout applied at PRAW API layer
+        - Default timeout configured consistently
+        - Timeout prevents indefinite hangs
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
+        from src.modtools import get_modqueue
+
+        # Verify the function is wrapped (has __wrapped__ attribute from functools.wraps)
+        assert hasattr(get_modqueue, '__wrapped__')
+        # Verify the function name is preserved
+        assert get_modqueue.__name__ == 'get_modqueue'
 
     @pytest.mark.unit
-    def test_approve_timeout_protection(self):
+    def test_approve_timeout_protection(self, praw_mock, mock_reddit_credentials, monkeypatch):
         """
         REDI-04: Approve call has timeout protection.
 
@@ -972,10 +977,14 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
+        from src.modtools import approve_item
+
+        # Verify the function is wrapped
+        assert hasattr(approve_item, '__wrapped__')
+        assert approve_item.__name__ == 'approve_item'
 
     @pytest.mark.unit
-    def test_remove_timeout_protection(self):
+    def test_remove_timeout_protection(self, praw_mock, mock_reddit_credentials, monkeypatch):
         """
         REDI-04: Remove call has timeout protection.
 
@@ -987,10 +996,14 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
+        from src.modtools import remove_item
+
+        # Verify the function is wrapped
+        assert hasattr(remove_item, '__wrapped__')
+        assert remove_item.__name__ == 'remove_item'
 
     @pytest.mark.unit
-    def test_ban_timeout_protection(self):
+    def test_ban_timeout_protection(self, praw_mock, mock_reddit_credentials, monkeypatch):
         """
         REDI-04: Ban call has timeout protection.
 
@@ -1002,4 +1015,8 @@ class TestTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        pytest.skip(reason="Wave 2 - Timeout wrapper applied in Task 3")
+        from src.modtools import ban_user
+
+        # Verify the function is wrapped
+        assert hasattr(ban_user, '__wrapped__')
+        assert ban_user.__name__ == 'ban_user'

@@ -193,6 +193,7 @@ def sanitize_moderation_error(error: Exception, context: Optional[dict] = None) 
 # Modqueue Retrieval (MODT-01)
 # =============================================================================
 
+@with_timeout(timeout_seconds=MODTOOLS_TIMEOUT)
 def get_modqueue(subreddit: str, limit: int = 25) -> list[dict]:
     """
     Fetch modqueue items from a subreddit.
@@ -270,6 +271,7 @@ def get_modqueue(subreddit: str, limit: int = 25) -> list[dict]:
 # Content Approval and Removal (MODT-02, MODT-03)
 # =============================================================================
 
+@with_timeout(timeout_seconds=MODTOOLS_TIMEOUT)
 def approve_item(thing_id: str) -> None:
     """
     Approve a comment or submission, removing it from the modqueue.
@@ -318,6 +320,7 @@ def approve_item(thing_id: str) -> None:
         raise type(e)(f"Failed to approve {thing_id}: {sanitized_msg}") from e
 
 
+@with_timeout(timeout_seconds=MODTOOLS_TIMEOUT)
 def remove_item(thing_id: str, reason: str = "", spam: bool = False) -> None:
     """
     Remove a comment or submission from public view.
@@ -376,6 +379,7 @@ def remove_item(thing_id: str, reason: str = "", spam: bool = False) -> None:
 # User Banning (MODT-04)
 # =============================================================================
 
+@with_timeout(timeout_seconds=MODTOOLS_TIMEOUT)
 def ban_user(
     subreddit: str,
     username: str,
