@@ -41,13 +41,13 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **DEPL-02**: Dockerfile includes uv package manager for dependency installation
 - [x] **DEPL-03**: docker-compose.yml provided for homelab deployment
 - [x] **DEPL-04**: `.env.example` file includes all 5 required Reddit credential variables
-- [ ] **DEPL-05**: GitHub Actions CI workflow runs on every push
+- [x] **DEPL-05**: GitHub Actions CI workflow runs on every push
 
 ### CI/CD Pipeline
 
 - [x] **CICD-01**: CI runs mandatory linters (ruff, mypy, or equivalent)
-- [ ] **CICD-02**: CI runs tests with full coverage requirement
-- [ ] **CICD-03**: CI builds Docker image on successful tests
+- [x] **CICD-02**: CI runs tests with full coverage requirement
+- [x] **CICD-03**: CI builds Docker image on successful tests
 - [ ] **CICD-04**: CI pushes Docker image to `ghcr.io/axelfooley` on main branch
 
 ## v2 Requirements
@@ -112,10 +112,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MODT-05 | Phase 3 | Complete |
 | SAFE-01 | Phase 3 | Pending |
 | SAFE-02 | Phase 3 | Pending |
-| DEPL-05 | Phase 4 | Pending |
+| DEPL-05 | Phase 4 | Complete |
 | CICD-01 | Phase 4 | Complete |
-| CICD-02 | Phase 4 | Pending |
-| CICD-03 | Phase 4 | Pending |
+| CICD-02 | Phase 4 | Complete |
+| CICD-03 | Phase 4 | Complete |
 | CICD-04 | Phase 4 | Pending |
 
 **Coverage:**
