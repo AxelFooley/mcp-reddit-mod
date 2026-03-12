@@ -38,7 +38,7 @@ def status() -> str:
     """
     return (
         "Server operational. Moderation tools available: "
-        "get_modqueue, approve_item, remove_item, ban_user."
+        "get_modqueue, approve_item, remove_item, ban_user, get_user_history."
     )
 
 
@@ -168,6 +168,35 @@ def ban_user_tool(subreddit: str, username: str, reason: str, duration_days: int
         })
     except Exception as e:
         return json.dumps({"error": str(e)})
+
+
+@mcp.tool()
+def get_user_history_tool(username: str, subreddit: str, limit: int = 100) -> str:
+    """
+    Fetch user's post and comment history in a subreddit.
+
+    Useful for detecting repeat offenders by reviewing their previous
+    posts and comments that were flagged or removed.
+
+    Args:
+        username: Reddit username (without u/ prefix)
+        subreddit: Subreddit name (without r/ prefix)
+        limit: Maximum number of items to fetch (default: 100)
+
+    Returns:
+        str: JSON string of user's history items with removed flag.
+
+    Examples:
+        >>> get_user_history_tool("spam_user", "testsub")
+        >>> get_user_history_tool("troll", "testsub", limit=50)
+    """
+    from src.modtools import get_user_history, sanitize_moderation_error
+
+    try:
+        history = get_user_history(username, subreddit, limit)
+        return json.dumps(history, indent=2)
+    except Exception as e:
+        return f"Error fetching user history: {sanitize_moderation_error(e)}"
 
 
 # =============================================================================
