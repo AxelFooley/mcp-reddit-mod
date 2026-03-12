@@ -178,6 +178,125 @@ def reset_reddit_client_singleton():
         pass  # Module doesn't exist yet or no _reddit_instance
 
 
+@pytest.fixture
+def mock_subreddit_mod(monkeypatch):
+    """
+    Mock PRAW subreddit moderation API for testing.
+
+    This fixture provides a mock object that simulates PRAW's subreddit.modqueue()
+    method for testing modqueue retrieval functionality (MODT-01).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for patching
+
+    Yields:
+        Mock: Mocked subreddit object with modqueue() method
+    """
+    from unittest.mock import Mock
+
+    mock_subreddit = Mock()
+    # Mock modqueue() to return empty list by default
+    mock_subreddit.modqueue.return_value = []
+    # Mock the limit parameter handling
+    mock_subreddit.modqueue.__name__ = "modqueue"
+
+    with monkeypatch.context() as m:
+        # Patch the subreddit object that would be returned by reddit.subreddit()
+        m.setattr("praw.models.Subreddit", Mock(return_value=mock_subreddit))
+        yield mock_subreddit
+
+
+@pytest.fixture
+def mock_comment_mod(monkeypatch):
+    """
+    Mock PRAW comment moderation API for testing.
+
+    This fixture provides a mock object that simulates PRAW's comment.mod.approve()
+    and comment.mod.remove() methods for testing content approval and removal (MODT-02, MODT-03).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for patching
+
+    Yields:
+        Mock: Mocked comment object with mod attribute having approve/remove methods
+    """
+    from unittest.mock import Mock
+
+    mock_comment = Mock()
+    # Create mock.mod interface
+    mock_mod = Mock()
+    mock_mod.approve.return_value = None  # Void method
+    mock_mod.remove.return_value = None  # Void method
+    mock_comment.mod = mock_mod
+
+    with monkeypatch.context() as m:
+        # Patch the Comment model
+        m.setattr("praw.models.Comment", Mock(return_value=mock_comment))
+        yield mock_comment
+
+
+@pytest.fixture
+def mock_submission_mod(monkeypatch):
+    """
+    Mock PRAW submission moderation API for testing.
+
+    This fixture provides a mock object that simulates PRAW's submission.mod.approve()
+    and submission.mod.remove() methods for testing content approval and removal (MODT-02, MODT-03).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for patching
+
+    Yields:
+        Mock: Mocked submission object with mod attribute having approve/remove methods
+    """
+    from unittest.mock import Mock
+
+    mock_submission = Mock()
+    # Create mock.mod interface (same as comment)
+    mock_mod = Mock()
+    mock_mod.approve.return_value = None  # Void method
+    mock_mod.remove.return_value = None  # Void method
+    mock_submission.mod = mock_mod
+
+    with monkeypatch.context() as m:
+        # Patch the Submission model
+        m.setattr("praw.models.Submission", Mock(return_value=mock_submission))
+        yield mock_submission
+
+
+@pytest.fixture
+def mock_redditor(monkeypatch):
+    """
+    Mock PRAW redditor API for testing.
+
+    This fixture provides a mock object that simulates PRAW's redditor.submissions.new()
+    and redditor.comments.new() methods for testing user history fetching (MODT-05).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture for patching
+
+    Yields:
+        Mock: Mocked redditor object with submissions and comments attributes
+    """
+    from unittest.mock import Mock
+
+    mock_redditor_instance = Mock()
+    # Mock submissions.new() to return empty list by default
+    mock_submissions = Mock()
+    mock_submissions.new.return_value = []
+    mock_redditor_instance.submissions = mock_submissions
+
+    # Mock comments.new() to return empty list by default
+    mock_comments = Mock()
+    mock_comments.new.return_value = []
+    mock_redditor_instance.comments = mock_comments
+
+    with monkeypatch.context() as m:
+        # Patch the Redditor model
+        m.setattr("praw.models.Redditor", Mock(return_value=mock_redditor_instance))
+        yield mock_redditor_instance
+
+
 # Test configuration markers
 def pytest_configure(config):
     """
