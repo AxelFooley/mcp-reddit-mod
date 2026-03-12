@@ -19,7 +19,7 @@ class TestModqueue:
     """
 
     @pytest.mark.unit
-    def test_get_modqueue_returns_items(self):
+    def test_get_modqueue_returns_items(self, praw_mock, mock_reddit_credentials):
         """
         MODT-01: Modqueue returns items for review.
 
@@ -31,10 +31,56 @@ class TestModqueue:
 
         Reference: REQUIREMENTS.md MODT-01
         """
-        pytest.skip(reason="Wave 1 - Modqueue implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import get_modqueue
+
+        # Create mock modqueue items
+        mock_comment = Mock()
+        mock_comment.fullname = "t1_abc123"
+        mock_comment.__class__.__name__ = "Comment"
+        mock_author = Mock()
+        mock_author.__str__ = Mock(return_value="test_user")
+        mock_comment.author = mock_author
+        mock_comment.body = "This is spam"
+        mock_comment.created_utc = 1234567890.0
+        mock_sub = Mock()
+        mock_sub.__str__ = Mock(return_value="testsub")
+        mock_comment.subreddit = mock_sub
+
+        mock_submission = Mock()
+        mock_submission.fullname = "t3_def456"
+        mock_submission.__class__.__name__ = "Submission"
+        mock_submission.author = None  # Deleted user
+        # Empty selftext means use title
+        mock_submission.selftext = ""
+        mock_submission.title = "Rule violation post"
+        mock_submission.created_utc = 1234567891.0
+        mock_submission.subreddit = mock_sub
+
+        # Configure mock to return modqueue items
+        praw_mock["instance"].subreddit.return_value.mod.modqueue.return_value = [
+            mock_comment, mock_submission
+        ]
+
+        # Test modqueue retrieval
+        result = get_modqueue("testsub", limit=25)
+
+        # Verify results
+        assert len(result) == 2
+        assert result[0]["thing_id"] == "t1_abc123"
+        assert result[0]["type"] == "comment"
+        assert result[0]["author"] == "test_user"
+        assert result[0]["body"] == "This is spam"
+        assert result[0]["created_utc"] == 1234567890.0
+
+        assert result[1]["thing_id"] == "t3_def456"
+        assert result[1]["type"] == "submission"
+        assert result[1]["author"] == "[deleted]"
+        assert result[1]["body"] == "Rule violation post"
 
     @pytest.mark.unit
-    def test_get_modqueue_invalid_subreddit(self):
+    def test_get_modqueue_invalid_subreddit(self, praw_mock, mock_reddit_credentials):
         """
         MODT-01: Modqueue handles invalid subreddit errors.
 
@@ -46,10 +92,21 @@ class TestModqueue:
 
         Reference: REQUIREMENTS.md MODT-01
         """
-        pytest.skip(reason="Wave 1 - Modqueue implementation")
+        from praw.exceptions import PRAWException
+
+        from src.modtools import get_modqueue
+
+        # Configure mock to raise PRAW exception
+        praw_mock["instance"].subreddit.side_effect = PRAWException(
+            "Subreddit not found: r/nonexistent"
+        )
+
+        # Should raise exception with sanitized error
+        with pytest.raises(PRAWException):
+            get_modqueue("nonexistent")
 
     @pytest.mark.unit
-    def test_get_modqueue_empty(self):
+    def test_get_modqueue_empty(self, praw_mock, mock_reddit_credentials):
         """
         MODT-01: Modqueue handles empty queue gracefully.
 
@@ -60,7 +117,16 @@ class TestModqueue:
 
         Reference: REQUIREMENTS.md MODT-01
         """
-        pytest.skip(reason="Wave 1 - Modqueue implementation")
+        from src.modtools import get_modqueue
+
+        # Configure mock to return empty modqueue
+        praw_mock["instance"].subreddit.return_value.mod.modqueue.return_value = []
+
+        # Test with empty modqueue
+        result = get_modqueue("testsub")
+
+        # Should return empty list
+        assert result == []
 
 
 class TestApprove:

@@ -16,7 +16,9 @@ Key features:
 import re
 from typing import Optional
 
-from src.reddit_client import sanitize_error_message
+from praw.exceptions import PRAWException
+
+from src.reddit_client import get_reddit_client, sanitize_error_message
 
 # =============================================================================
 # Thing ID Validation (SAFE-01)
@@ -133,3 +135,80 @@ def sanitize_moderation_error(error: Exception, context: Optional[dict] = None) 
                 sanitized = sanitized.replace(value, f"***{key.upper()}***")
 
     return sanitized
+
+
+# =============================================================================
+# Modqueue Retrieval (MODT-01)
+# =============================================================================
+
+def get_modqueue(subreddit: str, limit: int = 25) -> list[dict]:
+    """
+    Fetch modqueue items from a subreddit.
+
+    The modqueue contains items that have been reported or caught by the
+    spam filter and require moderator review.
+
+    Args:
+        subreddit: Name of the subreddit (without r/ prefix)
+        limit: Maximum number of items to retrieve (default: 25)
+
+    Returns:
+        list[dict]: List of modqueue items with keys:
+            - thing_id: Reddit fullname (t1_* for comments, t3_* for submissions)
+            - type: "comment" or "submission"
+            - author: Username or "[deleted]" if user deleted
+            - body: Comment body or submission title/text
+            - created_utc: Unix timestamp of creation
+            - subreddit: Subreddit display name
+
+    Raises:
+        PRAWException: If API call fails (with sanitized error message)
+
+    Examples:
+        >>> items = get_modqueue("testsub", limit=10)
+        >>> for item in items:
+        ...     print(f"{item['type']}: {item['thing_id']}")
+    """
+    reddit = get_reddit_client()
+
+    try:
+        subreddit_obj = reddit.subreddit(subreddit)
+        modqueue_items = subreddit_obj.mod.modqueue(limit=limit)
+
+        result = []
+        for item in modqueue_items:
+            # Determine if comment or submission
+            # PRAW Comment objects have __class__.__name__ == "Comment"
+            item_type = "comment" if item.__class__.__name__ == "Comment" else "submission"
+
+            # Get author (handle deleted users)
+            author = str(item.author) if item.author else "[deleted]"
+
+            # Get body text (comments have body, submissions have selftext or title)
+            if item_type == "comment":
+                # Comments have a body attribute
+                content = item.body if hasattr(item, 'body') else ""
+            else:
+                # Submissions may have selftext or title
+                if hasattr(item, 'selftext') and item.selftext:
+                    content = item.selftext
+                elif hasattr(item, 'title'):
+                    content = item.title
+                else:
+                    content = ""
+
+            result.append({
+                "thing_id": item.fullname,
+                "type": item_type,
+                "author": author,
+                "body": content,
+                "created_utc": item.created_utc,
+                "subreddit": str(item.subreddit),
+            })
+
+        return result
+
+    except PRAWException as e:
+        # Sanitize error message before re-raising
+        sanitized_msg = sanitize_moderation_error(e)
+        raise type(e)(f"Failed to fetch modqueue for r/{subreddit}: {sanitized_msg}") from e
