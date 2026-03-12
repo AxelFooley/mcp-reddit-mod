@@ -138,7 +138,7 @@ class TestApprove:
     """
 
     @pytest.mark.unit
-    def test_approve_comment(self):
+    def test_approve_comment(self, praw_mock, mock_reddit_credentials):
         """
         MODT-02: Comment approval by thing_id.
 
@@ -150,10 +150,26 @@ class TestApprove:
 
         Reference: REQUIREMENTS.md MODT-02
         """
-        pytest.skip(reason="Wave 1 - Approve implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import approve_item
+
+        # Create mock comment with mod.approve() method
+        mock_comment = Mock()
+        mock_comment.mod.approve.return_value = None
+
+        # Configure praw mock to return the mock comment
+        praw_mock["instance"].comment.return_value = mock_comment
+
+        # Approve the comment (thing_id without t1_ prefix for PRAW)
+        approve_item("t1_abc123")
+
+        # Verify PRAW methods were called correctly
+        praw_mock["instance"].comment.assert_called_once_with("abc123")
+        mock_comment.mod.approve.assert_called_once()
 
     @pytest.mark.unit
-    def test_approve_submission(self):
+    def test_approve_submission(self, praw_mock, mock_reddit_credentials):
         """
         MODT-02: Submission approval by thing_id.
 
@@ -165,10 +181,26 @@ class TestApprove:
 
         Reference: REQUIREMENTS.md MODT-02
         """
-        pytest.skip(reason="Wave 1 - Approve implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import approve_item
+
+        # Create mock submission with mod.approve() method
+        mock_submission = Mock()
+        mock_submission.mod.approve.return_value = None
+
+        # Configure praw mock to return the mock submission
+        praw_mock["instance"].submission.return_value = mock_submission
+
+        # Approve the submission
+        approve_item("t3_def456")
+
+        # Verify PRAW methods were called correctly
+        praw_mock["instance"].submission.assert_called_once_with("def456")
+        mock_submission.mod.approve.assert_called_once()
 
     @pytest.mark.unit
-    def test_approve_invalid_thing_id(self):
+    def test_approve_invalid_thing_id(self, praw_mock, mock_reddit_credentials):
         """
         MODT-02: Approval validates thing_id format.
 
@@ -180,7 +212,14 @@ class TestApprove:
 
         Reference: REQUIREMENTS.md MODT-02
         """
-        pytest.skip(reason="Wave 1 - Approve implementation")
+        from src.modtools import approve_item
+
+        # Invalid thing_id formats should raise ValueError
+        with pytest.raises(ValueError, match="Invalid thing_id format"):
+            approve_item("invalid_id")
+
+        with pytest.raises(ValueError, match="Unsupported thing_id type"):
+            approve_item("t2_abc123")  # t2_ is account, not content
 
 
 class TestRemove:
@@ -192,7 +231,7 @@ class TestRemove:
     """
 
     @pytest.mark.unit
-    def test_remove_item_with_reason(self):
+    def test_remove_item_with_reason(self, praw_mock, mock_reddit_credentials):
         """
         MODT-03: Item removal with reason.
 
@@ -204,10 +243,26 @@ class TestRemove:
 
         Reference: REQUIREMENTS.md MODT-03
         """
-        pytest.skip(reason="Wave 1 - Remove implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import remove_item
+
+        # Create mock comment with mod.remove() method
+        mock_comment = Mock()
+        mock_comment.mod.remove.return_value = None
+
+        # Configure praw mock to return the mock comment
+        praw_mock["instance"].comment.return_value = mock_comment
+
+        # Remove the comment with a reason
+        remove_item("t1_abc123", reason="Spam")
+
+        # Verify PRAW methods were called correctly
+        praw_mock["instance"].comment.assert_called_once_with("abc123")
+        mock_comment.mod.remove.assert_called_once_with(spam=False)
 
     @pytest.mark.unit
-    def test_remove_item_as_spam(self):
+    def test_remove_item_as_spam(self, praw_mock, mock_reddit_credentials):
         """
         MODT-03: Item removal with spam flag.
 
@@ -219,10 +274,26 @@ class TestRemove:
 
         Reference: REQUIREMENTS.md MODT-03
         """
-        pytest.skip(reason="Wave 1 - Remove implementation")
+        from unittest.mock import Mock
+
+        from src.modtools import remove_item
+
+        # Create mock submission with mod.remove() method
+        mock_submission = Mock()
+        mock_submission.mod.remove.return_value = None
+
+        # Configure praw mock to return the mock submission
+        praw_mock["instance"].submission.return_value = mock_submission
+
+        # Remove the submission with spam flag
+        remove_item("t3_def456", spam=True)
+
+        # Verify PRAW methods were called correctly with spam=True
+        praw_mock["instance"].submission.assert_called_once_with("def456")
+        mock_submission.mod.remove.assert_called_once_with(spam=True)
 
     @pytest.mark.unit
-    def test_remove_item_invalid_thing_id(self):
+    def test_remove_item_invalid_thing_id(self, praw_mock, mock_reddit_credentials):
         """
         MODT-03: Removal validates thing_id format.
 
@@ -234,7 +305,14 @@ class TestRemove:
 
         Reference: REQUIREMENTS.md MODT-03
         """
-        pytest.skip(reason="Wave 1 - Remove implementation")
+        from src.modtools import remove_item
+
+        # Invalid thing_id formats should raise ValueError
+        with pytest.raises(ValueError, match="Invalid thing_id format"):
+            remove_item("invalid_id")
+
+        with pytest.raises(ValueError, match="Unsupported thing_id type"):
+            remove_item("t4_abc123")  # t4_ is message, not supported
 
 
 class TestBan:

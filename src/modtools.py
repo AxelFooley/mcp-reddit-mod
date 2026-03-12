@@ -212,3 +212,109 @@ def get_modqueue(subreddit: str, limit: int = 25) -> list[dict]:
         # Sanitize error message before re-raising
         sanitized_msg = sanitize_moderation_error(e)
         raise type(e)(f"Failed to fetch modqueue for r/{subreddit}: {sanitized_msg}") from e
+
+
+# =============================================================================
+# Content Approval and Removal (MODT-02, MODT-03)
+# =============================================================================
+
+def approve_item(thing_id: str) -> None:
+    """
+    Approve a comment or submission, removing it from the modqueue.
+
+    Approved items become visible to other users and are removed from
+    the moderation queue. This action is idempotent - approving an
+    already-approved item is safe and has no effect.
+
+    Args:
+        thing_id: Reddit fullname (t1_* for comments, t3_* for submissions)
+
+    Raises:
+        ValueError: If thing_id format is invalid
+        PRAWException: If API call fails (with sanitized error message)
+
+    Examples:
+        >>> approve_item("t1_abc123")  # Approve comment
+        >>> approve_item("t3_def456")  # Approve submission
+    """
+    # Validate thing_id format
+    validate_thing_id(thing_id)
+
+    # Extract the type digit and base36 ID
+    prefix = thing_id[1]  # '1' for comment, '3' for submission
+    item_id = thing_id[3:]  # Base36 ID without prefix
+
+    reddit = get_reddit_client()
+
+    try:
+        # Route to appropriate PRAW method based on type
+        if prefix == "1":
+            # Comment
+            item = reddit.comment(item_id)
+        elif prefix == "3":
+            # Submission
+            item = reddit.submission(item_id)
+        else:
+            # This shouldn't happen due to validate_thing_id, but be defensive
+            raise ValueError(f"Cannot approve thing_id type: t{prefix}_")
+
+        # Call approve()
+        item.mod.approve()
+
+    except PRAWException as e:
+        sanitized_msg = sanitize_moderation_error(e)
+        raise type(e)(f"Failed to approve {thing_id}: {sanitized_msg}") from e
+
+
+def remove_item(thing_id: str, reason: str = "", spam: bool = False) -> None:
+    """
+    Remove a comment or submission from public view.
+
+    Removed items are hidden from all users except moderators. The spam
+    flag triggers Reddit's spam filtering, which may affect the user's
+    spam score for future posts.
+
+    Note: The reason parameter is recorded for moderator notes but is not
+    displayed to the user (Reddit API limitation).
+
+    Args:
+        thing_id: Reddit fullname (t1_* for comments, t3_* for submissions)
+        reason: Moderation reason for the removal (for mod notes only)
+        spam: Whether to mark as spam (triggers spam filtering)
+
+    Raises:
+        ValueError: If thing_id format is invalid
+        PRAWException: If API call fails (with sanitized error message)
+
+    Examples:
+        >>> remove_item("t1_abc123", reason="Spam")
+        >>> remove_item("t3_def456", spam=True)
+    """
+    # Validate thing_id format
+    validate_thing_id(thing_id)
+
+    # Extract the type digit and base36 ID
+    prefix = thing_id[1]  # '1' for comment, '3' for submission
+    item_id = thing_id[3:]  # Base36 ID without prefix
+
+    reddit = get_reddit_client()
+
+    try:
+        # Route to appropriate PRAW method based on type
+        if prefix == "1":
+            # Comment
+            item = reddit.comment(item_id)
+        elif prefix == "3":
+            # Submission
+            item = reddit.submission(item_id)
+        else:
+            # This shouldn't happen due to validate_thing_id, but be defensive
+            raise ValueError(f"Cannot remove thing_id type: t{prefix}_")
+
+        # Call remove() with spam flag
+        # Note: reason is not used by PRAW's remove() method (API limitation)
+        item.mod.remove(spam=spam)
+
+    except PRAWException as e:
+        sanitized_msg = sanitize_moderation_error(e)
+        raise type(e)(f"Failed to remove {thing_id}: {sanitized_msg}") from e
