@@ -313,7 +313,15 @@ class TestValidation:
 
         Reference: REQUIREMENTS.md SAFE-01
         """
-        pytest.skip(reason="Wave 1 - Thing ID validation")
+        from src.modtools import validate_thing_id
+
+        # Valid comment thing_id should pass validation and return the validated id
+        result = validate_thing_id("t1_abc123")
+        assert result == "t1_abc123"
+
+        # Valid submission thing_id should also pass
+        result = validate_thing_id("t3_def456")
+        assert result == "t3_def456"
 
     @pytest.mark.unit
     def test_validate_thing_id_valid_submission(self):
@@ -328,7 +336,11 @@ class TestValidation:
 
         Reference: REQUIREMENTS.md SAFE-01
         """
-        pytest.skip(reason="Wave 1 - Thing ID validation")
+        from src.modtools import validate_thing_id
+
+        # Valid submission thing_id with expected_prefix should pass
+        result = validate_thing_id("t3_xyz789", expected_prefix="3")
+        assert result == "t3_xyz789"
 
     @pytest.mark.unit
     def test_validate_thing_id_invalid_format(self):
@@ -343,7 +355,15 @@ class TestValidation:
 
         Reference: REQUIREMENTS.md SAFE-01
         """
-        pytest.skip(reason="Wave 1 - Thing ID validation")
+        from src.modtools import validate_thing_id
+
+        # No prefix at all
+        with pytest.raises(ValueError, match="Invalid thing_id format"):
+            validate_thing_id("abc123")
+
+        # Wrong prefix type (t2_ is for accounts, not content)
+        with pytest.raises(ValueError, match="Unsupported thing_id type"):
+            validate_thing_id("t2_abc123")
 
     @pytest.mark.unit
     def test_validate_thing_id_missing_prefix(self):
@@ -357,7 +377,15 @@ class TestValidation:
 
         Reference: REQUIREMENTS.md SAFE-01
         """
-        pytest.skip(reason="Wave 1 - Thing ID validation")
+        from src.modtools import validate_thing_id
+
+        # Empty string
+        with pytest.raises(ValueError, match="thing_id cannot be empty"):
+            validate_thing_id("")
+
+        # Missing underscore
+        with pytest.raises(ValueError, match="Invalid thing_id format"):
+            validate_thing_id("t1abc123")
 
     @pytest.mark.unit
     def test_validate_thing_id_wrong_type(self):
@@ -372,7 +400,15 @@ class TestValidation:
 
         Reference: REQUIREMENTS.md SAFE-01
         """
-        pytest.skip(reason="Wave 1 - Thing ID validation")
+        from src.modtools import validate_thing_id
+
+        # t4_ (message), t5_ (subreddit), t6_ (award), t8_ (poll) are not supported
+        with pytest.raises(ValueError, match="Unsupported thing_id type"):
+            validate_thing_id("t4_abc123")
+
+        # Prefix mismatch when expected_prefix provided
+        with pytest.raises(ValueError, match="Expected thing_id prefix '1' but got '3'"):
+            validate_thing_id("t3_abc123", expected_prefix="1")
 
 
 class TestSanitization:
@@ -396,7 +432,21 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        pytest.skip(reason="Wave 1 - Error sanitization")
+        from src.modtools import sanitize_moderation_error
+        from praw.exceptions import PRAWException
+
+        # Create an error containing credential info
+        error_msg = "Authentication failed for user test_user with client_id test_client_id"
+        error = PRAWException(error_msg)
+
+        # Sanitize should remove credential-like strings
+        sanitized = sanitize_moderation_error(error)
+
+        # Check credentials are redacted
+        assert "test_user" not in sanitized or "***" in sanitized
+        assert "test_client_id" not in sanitized or "***" in sanitized
+        # Error should still have meaningful content
+        assert "Authentication" in sanitized or "failed" in sanitized
 
     @pytest.mark.unit
     def test_error_sanitization_removes_subreddit_names(self):
@@ -406,11 +456,22 @@ class TestSanitization:
         Expected behavior (Wave 1):
         - System redacts subreddit names from error messages
         - Prevents leaking sensitive subreddit information
-        - Replaced with placeholder like [SUBREDDIT]
+        - Replaced with placeholder like r/SUBREDDIT
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        pytest.skip(reason="Wave 1 - Error sanitization")
+        from src.modtools import sanitize_moderation_error
+        from praw.exceptions import PRAWException
+
+        # Create an error containing subreddit name
+        error_msg = "Failed to fetch modqueue for r/MyPrivateSubreddit"
+        error = PRAWException(error_msg)
+
+        sanitized = sanitize_moderation_error(error)
+
+        # Subreddit name should be redacted
+        assert "MyPrivateSubreddit" not in sanitized
+        assert "r/SUBREDDIT" in sanitized or "r/[SUBREDDIT]" in sanitized
 
     @pytest.mark.unit
     def test_error_sanitization_removes_usernames(self):
@@ -420,11 +481,22 @@ class TestSanitization:
         Expected behavior (Wave 1):
         - System redacts usernames from error messages
         - Prevents leaking user privacy information
-        - Replaced with placeholder like [USER]
+        - Replaced with placeholder like u/USERNAME
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        pytest.skip(reason="Wave 1 - Error sanitization")
+        from src.modtools import sanitize_moderation_error
+        from praw.exceptions import PRAWException
+
+        # Create an error containing username
+        error_msg = "User u/SomeRedditor not found in subreddit"
+        error = PRAWException(error_msg)
+
+        sanitized = sanitize_moderation_error(error)
+
+        # Username should be redacted
+        assert "SomeRedditor" not in sanitized
+        assert "u/USERNAME" in sanitized or "u/[USERNAME]" in sanitized
 
     @pytest.mark.unit
     def test_error_sanitization_removes_thing_ids(self):
@@ -434,11 +506,23 @@ class TestSanitization:
         Expected behavior (Wave 1):
         - System redacts thing_ids from error messages
         - Prevents leaking content identifiers
-        - Replaced with placeholder like [THING_ID]
+        - Replaced with placeholder like tX_THINGID
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        pytest.skip(reason="Wave 1 - Error sanitization")
+        from src.modtools import sanitize_moderation_error
+        from praw.exceptions import PRAWException
+
+        # Create an error containing thing IDs
+        error_msg = "Failed to approve comment t1_abc123 and submission t3_def456"
+        error = PRAWException(error_msg)
+
+        sanitized = sanitize_moderation_error(error)
+
+        # Thing IDs should be redacted
+        assert "t1_abc123" not in sanitized
+        assert "t3_def456" not in sanitized
+        assert "tX_THINGID" in sanitized or "tX_[THINGID]" in sanitized
 
     @pytest.mark.unit
     def test_error_sanitization_preserves_safe_content(self):
@@ -453,4 +537,169 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        pytest.skip(reason="Wave 1 - Error sanitization")
+        from src.modtools import sanitize_moderation_error
+        from praw.exceptions import PRAWException
+
+        # Create an error with both sensitive and safe content
+        error_msg = "HTTP 403 Forbidden: Invalid scope in request for r/testsub"
+        error = PRAWException(error_msg)
+
+        sanitized = sanitize_moderation_error(error)
+
+        # Safe error context should be preserved
+        assert "HTTP" in sanitized or "403" in sanitized or "Forbidden" in sanitized
+        # Sensitive info redacted
+        assert "testsub" not in sanitized or "SUBREDDIT" in sanitized
+
+
+class TestErrorPropagation:
+    """
+    Test suite for REDI-03: Error Propagation.
+
+    Verifies that PRAW exceptions propagate correctly with
+    sanitized error details for AI agent decision-making.
+    """
+
+    @pytest.mark.unit
+    def test_praw_exception_propagates(self):
+        """
+        REDI-03: PRAW exceptions propagate with error details.
+
+        Expected behavior (Wave 2):
+        - System allows PRAW exceptions to propagate to caller
+        - Exception type preserved (PRAWException, RedditAPIException, etc.)
+        - Error details included but sanitized
+        - Caller can handle specific error types appropriately
+
+        Reference: REQUIREMENTS.md REDI-03
+        """
+        pytest.skip(reason="Wave 2 - Error propagation")
+
+    @pytest.mark.unit
+    def test_praw_forbidden_propagates(self):
+        """
+        REDI-03: 403 Forbidden errors propagate correctly.
+
+        Expected behavior (Wave 2):
+        - Permission errors (403) propagate as appropriate exception
+        - Error indicates insufficient permissions for action
+        - Error message sanitized (no credentials leaked)
+        - Caller can distinguish auth errors from other failures
+
+        Reference: REQUIREMENTS.md REDI-03
+        """
+        pytest.skip(reason="Wave 2 - Error propagation")
+
+    @pytest.mark.unit
+    def test_praw_not_found_propagates(self):
+        """
+        REDI-03: 404 Not Found errors propagate correctly.
+
+        Expected behavior (Wave 2):
+        - Not found errors (404) propagate as appropriate exception
+        - Error indicates resource doesn't exist
+        - Error message sanitized
+        - Caller can distinguish not found from other failures
+
+        Reference: REQUIREMENTS.md REDI-03
+        """
+        pytest.skip(reason="Wave 2 - Error propagation")
+
+    @pytest.mark.unit
+    def test_praw_exception_sanitized(self):
+        """
+        REDI-03: PRAW exception messages are sanitized.
+
+        Expected behavior (Wave 2):
+        - All PRAW exceptions caught and sanitized before propagation
+        - Credential values removed from error messages
+        - Subreddit names redacted for privacy
+        - Error remains actionable but safe to display
+
+        Reference: REQUIREMENTS.md REDI-03, SAFE-02
+        """
+        pytest.skip(reason="Wave 2 - Error propagation")
+
+
+class TestTimeout:
+    """
+    Test suite for REDI-04: Timeout Protection.
+
+    Verifies that all PRAW API calls have timeout protection
+    to prevent indefinite hanging.
+    """
+
+    @pytest.mark.unit
+    def test_modqueue_timeout_protection(self):
+        """
+        REDI-04: Modqueue call has timeout protection.
+
+        Expected behavior (Wave 2):
+        - get_modqueue completes within timeout period
+        - TimeoutError raised if PRAW call exceeds timeout
+        - Default timeout configured (e.g., 30 seconds)
+        - Timeout applied at PRAW API layer
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        pytest.skip(reason="Wave 2 - Timeout wrapper")
+
+    @pytest.mark.unit
+    def test_approve_timeout_protection(self):
+        """
+        REDI-04: Approve call has timeout protection.
+
+        Expected behavior (Wave 2):
+        - approve_item completes within timeout period
+        - TimeoutError raised if PRAW call exceeds timeout
+        - Default timeout configured consistently
+        - Timeout prevents indefinite hangs
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        pytest.skip(reason="Wave 2 - Timeout wrapper")
+
+    @pytest.mark.unit
+    def test_remove_timeout_protection(self):
+        """
+        REDI-04: Remove call has timeout protection.
+
+        Expected behavior (Wave 2):
+        - remove_item completes within timeout period
+        - TimeoutError raised if PRAW call exceeds timeout
+        - Default timeout configured consistently
+        - Timeout prevents indefinite hangs
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        pytest.skip(reason="Wave 2 - Timeout wrapper")
+
+    @pytest.mark.unit
+    def test_ban_timeout_protection(self):
+        """
+        REDI-04: Ban call has timeout protection.
+
+        Expected behavior (Wave 2):
+        - ban_user completes within timeout period
+        - TimeoutError raised if PRAW call exceeds timeout
+        - Default timeout configured consistently
+        - Timeout prevents indefinite hangs
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        pytest.skip(reason="Wave 2 - Timeout wrapper")
+
+    @pytest.mark.unit
+    def test_timeout_raises_timeout_error(self):
+        """
+        REDI-04: Timeout raises TimeoutError.
+
+        Expected behavior (Wave 2):
+        - Exceeding timeout raises TimeoutError (not generic Exception)
+        - Error message indicates which operation timed out
+        - Caller can distinguish timeout from other failures
+        - Timeout value is configurable if needed
+
+        Reference: REQUIREMENTS.md REDI-04
+        """
+        pytest.skip(reason="Wave 2 - Timeout wrapper")
