@@ -45,7 +45,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### CI/CD Pipeline
 
-- [ ] **CICD-01**: CI runs mandatory linters (ruff, mypy, or equivalent)
+- [x] **CICD-01**: CI runs mandatory linters (ruff, mypy, or equivalent)
 - [ ] **CICD-02**: CI runs tests with full coverage requirement
 - [ ] **CICD-03**: CI builds Docker image on successful tests
 - [ ] **CICD-04**: CI pushes Docker image to `ghcr.io/axelfooley` on main branch
@@ -113,7 +113,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SAFE-01 | Phase 3 | Pending |
 | SAFE-02 | Phase 3 | Pending |
 | DEPL-05 | Phase 4 | Pending |
-| CICD-01 | Phase 4 | Pending |
+| CICD-01 | Phase 4 | Complete |
 | CICD-02 | Phase 4 | Pending |
 | CICD-03 | Phase 4 | Pending |
 | CICD-04 | Phase 4 | Pending |

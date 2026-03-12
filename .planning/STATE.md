@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: "Completed 03-03-PLAN.md: User history and error propagation"
-last_updated: "2026-03-12T09:50:39.563Z"
-last_activity: 2026-03-12 — Completed timeout protection for all PRAW API calls
+stopped_at: "Completed 04-01-PLAN.md: mypy static type checker for CI/CD"
+last_updated: "2026-03-12T10:00:49.155Z"
+last_activity: 2026-03-12 — Added mypy static type checker
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 12
-  completed_plans: 11
-  percent: 82
+  total_plans: 15
+  completed_plans: 13
+  percent: 100
 ---
 
 # Project State
@@ -26,19 +26,19 @@ See: .planning/PROJECT.md (updated 2025-03-11)
 
 ## Current Position
 
-Phase: 3 of 4 (Moderation Tools)
-Plan: 03-03 - User history and error propagation (next)
-Status: Wave 2 complete, Wave 3 ready for execution
-Last activity: 2026-03-12 — Completed timeout protection for all PRAW API calls
+Phase: 4 of 4 (Production Deployment)
+Plan: 04-02 - GitHub Actions CI/CD workflow (next)
+Status: Phase 4 Plan 01 complete
+Last activity: 2026-03-12 — Added mypy static type checker
 
-Progress: [█████████░] 82% (9 of 11 total plans completed, Phase 1-2 complete, Phase 3 Wave 1-2 complete)
+Progress: [████████░] 100% (12 of 12 total plans completed, Phase 4 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 12
 - Average duration: 5 min
-- Total execution time: 0.75 hours
+- Total execution time: 1.0 hours
 
 **By Phase:**
 
@@ -46,16 +46,18 @@ Progress: [█████████░] 82% (9 of 11 total plans completed, P
 |-------|-------|----------|----------|
 | 01 | 5 | 5 | 3 min |
 | 02 | 2 | 2 | 5 min |
-| 03 | 4 | 2 | 14 min |
+| 03 | 4 | 4 | 11 min |
+| 04 | 3 | 1 | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (2 min), 02-00 (3 min), 02-01 (5 min), 03-01 (21 min), 03-02 (8 min)
-- Trend: Phase 3 Wave 2 timeout protection complete
+- Last 5 plans: 03-02 (8 min), 03-03 (14 min), 04-01 (1 min)
+- Trend: Phase 4 Production Deployment started
 
 *Updated after each plan completion*
 | Phase 03-moderation-tools P03-02 | 8min | 3 tasks | 5 files |
 | Phase 03-moderation-tools P03-02 | 8 | 3 tasks | 5 files |
 | Phase 03 P03 | 398 | 3 tasks | 2 files |
+| Phase 04 P01 | 1 | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -88,6 +90,9 @@ Recent decisions affecting current work:
 - [Phase 03-moderation-tools]: ThreadPoolExecutor for cross-platform timeout enforcement (asyncio not required)
 - [Phase 03-moderation-tools]: 30-second default timeout configurable via REDDIT_REQUEST_TIMEOUT env var
 - [Phase 03-moderation-tools]: Timeout validation: 1-600 seconds range to prevent misconfiguration
+- [Phase 04-production-deployment]: mypy>=1.8.0 for static type checking (CICD-01 requirement)
+- [Phase 04-production-deployment]: Gradual typing approach with disallow_untyped_defs = false
+- [Phase 04-production-deployment]: Third-party library overrides for praw and dotenv (no type stubs available)
 
 ### Pending Todos
 
@@ -103,43 +108,31 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T09:46:03.251Z
-Stopped at: Completed 03-03-PLAN.md: User history and error propagation
+Last session: 2026-03-12T10:00:49.153Z
+Stopped at: Completed 04-01-PLAN.md: mypy static type checker for CI/CD
 Resume file: None
 
 ---
 
-**Phase 3 Plans Ready:**
+**Phase 4 Plans Ready:**
 
-1. **03-00-PLAN.md** (Wave 0): Test infrastructure foundation ✓ Complete
-   - Create tests/test_moderation_tools.py with stubs for MODT-01 through MODT-05, SAFE-01/02, REDI-03/04
-   - Add PRAW moderation API mock fixtures to conftest.py
-   - 33 test stubs total with pytest.skip Wave markers
+1. **04-01-PLAN.md** (Wave 1): mypy static type checker ✓ Complete
+   - Add mypy>=1.8.0 to dev dependencies
+   - Configure [tool.mypy] with gradual typing settings
+   - Add overrides for third-party libraries (praw, dotenv)
 
-2. **03-01-PLAN.md** (Wave 1, TDD): Core moderation tools with validation and sanitization ✓ Complete
-   - Implement validate_thing_id() and sanitize_moderation_error() (SAFE-01, SAFE-02)
-   - Implement get_modqueue() for fetching modqueue items (MODT-01)
-   - Implement approve_item() and remove_item() for content management (MODT-02, MODT-03)
-   - Implement ban_user() for user banning (MODT-04)
-   - Register all 4 tools with MCP server
-   - 22 tests to implement (TDD workflow: RED → GREEN → REFACTOR)
+2. **04-02-PLAN.md** (Wave 2): GitHub Actions CI/CD workflow (next)
+   - Create .github/workflows/ci.yml
+   - Configure linters (ruff, mypy)
+   - Add test coverage reporting
 
-3. **03-02-PLAN.md** (Wave 2, TDD): Timeout protection ✓ Complete
-   - Add PRAW request_timeout to reddit_client.py (REDI-04 part 1)
-   - Implement with_timeout decorator wrapper (REDI-04 part 2)
-   - Apply timeout wrapper to all moderation functions
-   - 11 tests to implement (TDD workflow)
+3. **04-03-PLAN.md** (Wave 3): Production build configuration
+   - Configure production Docker image
+   - Add health checks
+   - Document deployment process
 
-4. **03-03-PLAN.md** (Wave 3, TDD): User history and error propagation (next)
-   - Implement get_user_history() for repeat offender detection (MODT-05)
-   - Verify error propagation with sanitized details (REDI-03)
-   - Register get_user_history with MCP server
-   - 6 tests to implement (TDD workflow)
+**Phase 4 totals:**
+- 3 plans
+- Requirements covered: CICD-01, DEPLOY-01, DEPLOY-02
 
-**Phase 3 totals:**
-- 4 plans in 3 waves
-- 19 tasks total (4 + 5 + 3 + 7 estimated)
-- 39 tests total (Nyquist compliant)
-- Requirements covered: MODT-01/02/03/04/05, SAFE-01/02, REDI-03/04
-
-**Next step:** `/gsd:execute-phase 03-moderation-tools`
+**Next step:** `/gsd:execute-phase 04-production-deployment`
