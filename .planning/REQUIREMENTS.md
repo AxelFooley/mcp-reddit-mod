@@ -19,7 +19,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **REDI-01**: PRAW client initialized from environment variables (REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, REDDIT_PASSWORD, REDDIT_USER_AGENT)
 - [x] **REDI-02**: PRAW uses script app authentication (not OAuth)
-- [ ] **REDI-03**: PRAW exceptions propagate to AI agent with error details
+- [x] **REDI-03**: PRAW exceptions propagate to AI agent with error details
 - [x] **REDI-04**: All PRAW API calls wrapped with timeout to prevent indefinite hanging
 
 ### Moderation Tools
@@ -28,7 +28,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **MODT-02**: `approve_item(thing_id)` — approves a post or comment by thing_id
 - [ ] **MODT-03**: `remove_item(thing_id, reason)` — removes a post or comment with reason
 - [ ] **MODT-04**: `ban_user(subreddit, username, reason, duration_days)` — bans user (duration_days=0 for permanent)
-- [ ] **MODT-05**: `get_user_history(username, subreddit)` — fetches user's posts/comments that were previously flagged in the subreddit
+- [x] **MODT-05**: `get_user_history(username, subreddit)` — fetches user's posts/comments that were previously flagged in the subreddit
 
 ### Safety & Validation
 
@@ -103,13 +103,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEPL-04 | Phase 1 | Complete |
 | REDI-01 | Phase 2 | Complete |
 | REDI-02 | Phase 2 | Complete |
-| REDI-03 | Phase 3 | Pending |
+| REDI-03 | Phase 3 | Complete |
 | REDI-04 | Phase 3 | Complete |
 | MODT-01 | Phase 3 | Pending |
 | MODT-02 | Phase 3 | Pending |
 | MODT-03 | Phase 3 | Pending |
 | MODT-04 | Phase 3 | Pending |
-| MODT-05 | Phase 3 | Pending |
+| MODT-05 | Phase 3 | Complete |
 | SAFE-01 | Phase 3 | Pending |
 | SAFE-02 | Phase 3 | Pending |
 | DEPL-05 | Phase 4 | Pending |
