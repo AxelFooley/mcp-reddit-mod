@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install uv
+        run: pip install uv
+      - name: Install ruff
+        run: uv pip install ruff
+      - name: Run ruff
+        run: ruff check .
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install uv
+        run: pip install uv
+      - name: Install mypy
+        run: uv pip install mypy
+      - name: Run mypy
+        run: mypy src/
