@@ -432,8 +432,9 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        from src.modtools import sanitize_moderation_error
         from praw.exceptions import PRAWException
+
+        from src.modtools import sanitize_moderation_error
 
         # Create an error containing credential info
         error_msg = "Authentication failed for user test_user with client_id test_client_id"
@@ -460,8 +461,9 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        from src.modtools import sanitize_moderation_error
         from praw.exceptions import PRAWException
+
+        from src.modtools import sanitize_moderation_error
 
         # Create an error containing subreddit name
         error_msg = "Failed to fetch modqueue for r/MyPrivateSubreddit"
@@ -485,8 +487,9 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        from src.modtools import sanitize_moderation_error
         from praw.exceptions import PRAWException
+
+        from src.modtools import sanitize_moderation_error
 
         # Create an error containing username
         error_msg = "User u/SomeRedditor not found in subreddit"
@@ -510,8 +513,9 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        from src.modtools import sanitize_moderation_error
         from praw.exceptions import PRAWException
+
+        from src.modtools import sanitize_moderation_error
 
         # Create an error containing thing IDs
         error_msg = "Failed to approve comment t1_abc123 and submission t3_def456"
@@ -537,8 +541,9 @@ class TestSanitization:
 
         Reference: REQUIREMENTS.md SAFE-02
         """
-        from src.modtools import sanitize_moderation_error
         from praw.exceptions import PRAWException
+
+        from src.modtools import sanitize_moderation_error
 
         # Create an error with both sensitive and safe content
         error_msg = "HTTP 403 Forbidden: Invalid scope in request for r/testsub"
