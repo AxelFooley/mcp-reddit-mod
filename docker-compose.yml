@@ -1,7 +1,7 @@
 services:
   mcp-server:
     build: .
-    container_name: italia-career-mod
+    container_name: mcp-reddit-mod
     ports:
       - "8000:8000"
     environment:

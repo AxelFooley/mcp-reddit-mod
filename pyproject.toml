@@ -1,5 +1,5 @@
 [project]
-name = "italia-career-mod"
+name = "mcp-reddit-mod"
 version = "0.1.0"
 description = "AI-assisted Reddit moderation MCP server"
 requires-python = ">=3.10"
@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-italia-career-mod = "src.main:main"
+mcp-reddit-mod = "src.main:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -1,4 +1,4 @@
-# ItaliaCareerMod - AI-Assisted Reddit Moderation MCP Server
+# MCP-Reddit-Mod - AI-Assisted Reddit Moderation MCP Server
 
 An intelligent MCP (Model Context Protocol) server that provides AI-assisted Reddit moderation tools with human-in-the-loop oversight. Automatically review mod queue items, detect repeat offenders, and assist moderators while keeping destructive actions under human control.
 
@@ -22,8 +22,8 @@ An intelligent MCP (Model Context Protocol) server that provides AI-assisted Red
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/AxelFooley/italia-career-mod.git
-cd italia-career-mod
+git clone https://github.com/AxelFooley/mcp-reddit-mod.git
+cd mcp-reddit-mod
 ```
 
 ### 2. Configure Environment
@@ -119,7 +119,7 @@ ruff format .
 ## Project Structure
 
 ```
-italia-career-mod/
+mcp-reddit-mod/
 ├── src/
 │   ├── __init__.py
 │   ├── config.py        # Configuration and environment loading
@@ -178,7 +178,7 @@ docker compose up -d
 ### Building the Image
 
 ```bash
-docker build -t italia-career-mod:latest .
+docker build -t mcp-reddit-mod:latest .
 ```
 
 ### Running with Custom Configuration
@@ -187,7 +187,7 @@ docker build -t italia-career-mod:latest .
 docker run -d \
   -p 8000:8000 \
   --env-file .env \
-  italia-career-mod:latest
+  mcp-reddit-mod:latest
 ```
 
 ## License
@@ -204,7 +204,7 @@ Built with:
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/AxelFooley/italia-career-mod).
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/AxelFooley/mcp-reddit-mod).
 
 ---
 

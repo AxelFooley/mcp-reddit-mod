@@ -104,8 +104,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/axelfooley/italia-career-mod:latest
-            ghcr.io/axelfooley/italia-career-mod:${{ github.sha }}
+            ghcr.io/axelfooley/mcp-reddit-mod:latest
+            ghcr.io/axelfooley/mcp-reddit-mod:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Image digest

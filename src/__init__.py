@@ -1,1 +1,1 @@
-# italia-career-mod package
+# mcp-reddit-mod package
