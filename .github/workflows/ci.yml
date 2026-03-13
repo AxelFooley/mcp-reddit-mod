@@ -22,7 +22,7 @@ jobs:
       - name: Install uv
         run: pip install uv
       - name: Install ruff
-        run: uv pip install ruff
+        run: uv pip install --system ruff
       - name: Run ruff
         run: ruff check .
 
@@ -37,7 +37,7 @@ jobs:
       - name: Install uv
         run: pip install uv
       - name: Install mypy
-        run: uv pip install mypy
+        run: uv pip install --system mypy
       - name: Run mypy
         run: mypy src/
 
@@ -77,11 +77,11 @@ jobs:
         with:
           context: .
           push: false
-          tags: italia-career-mod:test
+          tags: mcp-reddit-mod:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Verify image
-        run: docker images | grep italia-career-mod
+        run: docker images | grep mcp-reddit-mod
 
   push:
     needs: build
