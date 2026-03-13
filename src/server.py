@@ -1,5 +1,5 @@
 """
-FastMCP server instance for italia-career-mod.
+FastMCP server instance for mcp-reddit-mod.
 
 This module creates and configures the MCP server using the FastMCP framework.
 It provides tool registration and server metadata for AI agent interactions.

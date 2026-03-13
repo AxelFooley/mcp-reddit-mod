@@ -355,7 +355,7 @@ class TestBan:
             "spam_user",
             ban_reason="Spamming",
             duration=None,
-            note="Banned via italia-career-mod MCP tool",
+            note="Banned via mcp-reddit-mod MCP tool",
         )
 
     @pytest.mark.unit
@@ -390,7 +390,7 @@ class TestBan:
             "spam_user",
             ban_reason="Spamming",
             duration=7,
-            note="Banned via italia-career-mod MCP tool",
+            note="Banned via mcp-reddit-mod MCP tool",
         )
 
     @pytest.mark.unit

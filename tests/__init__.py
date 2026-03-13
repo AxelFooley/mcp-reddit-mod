@@ -1,1 +1,1 @@
-"""Test suite for italia-career-mod MCP server."""
+"""Test suite for mcp-reddit-mod MCP server."""

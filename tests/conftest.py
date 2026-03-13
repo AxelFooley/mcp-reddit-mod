@@ -2,7 +2,7 @@
 Pytest configuration and shared fixtures for MCP server testing.
 
 This module provides common fixtures and configuration for testing
-the italia-career-mod MCP server implementation.
+the mcp-reddit-mod MCP server implementation.
 """
 
 import asyncio
@@ -69,7 +69,7 @@ def sample_reddit_config():
         "client_secret": "test_client_secret",
         "username": "test_user",
         "password": "test_password",
-        "user_agent": "italia-career-mod/0.1.0 by test_user"
+        "user_agent": "mcp-reddit-mod/0.1.0 by test_user"
     }
 
 

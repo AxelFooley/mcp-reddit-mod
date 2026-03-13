@@ -165,7 +165,7 @@ class TestServerMetadata:
         MCPF-04: Server provides name, version, and description.
 
         Expected behavior (Wave 1):
-        - Server name is "italia-career-mod"
+        - Server name is "mcp-reddit-mod"
         - Server version is "0.1.0"
         - Server description is non-empty and descriptive
 
@@ -174,7 +174,7 @@ class TestServerMetadata:
         from src.config import SERVER_DESCRIPTION, SERVER_NAME, SERVER_VERSION
         from src.server import mcp
         # Verify server configuration
-        assert SERVER_NAME == "italia-career-mod"
+        assert SERVER_NAME == "mcp-reddit-mod"
         assert SERVER_VERSION == "0.1.0"
         assert SERVER_DESCRIPTION is not None
         assert len(SERVER_DESCRIPTION) > 0
@@ -197,7 +197,7 @@ class TestServerMetadata:
         # FastMCP handles initialize requests automatically
         # Verify server instance exists with proper metadata
         assert mcp is not None
-        assert mcp.name == "italia-career-mod"
+        assert mcp.name == "mcp-reddit-mod"
 
 
 class TestErrorResponses:

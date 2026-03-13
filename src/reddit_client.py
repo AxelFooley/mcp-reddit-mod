@@ -1,5 +1,5 @@
 """
-Reddit client module for italia-career-mod MCP server.
+Reddit client module for mcp-reddit-mod MCP server.
 
 This module provides a lazy-initialization singleton PRAW Reddit client
 that authenticates using script app credentials from environment variables.

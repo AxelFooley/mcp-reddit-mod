@@ -1,5 +1,5 @@
 """
-Moderation tools module for italia-career-mod MCP server.
+Moderation tools module for mcp-reddit-mod MCP server.
 
 This module provides core Reddit moderation functionality through PRAW,
 including modqueue retrieval, content approval/removal, user banning,
@@ -428,7 +428,7 @@ def ban_user(
             username,
             ban_reason=reason,
             duration=duration,
-            note="Banned via italia-career-mod MCP tool",
+            note="Banned via mcp-reddit-mod MCP tool",
         )
 
     except PRAWException as e:
