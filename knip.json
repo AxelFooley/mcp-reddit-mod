@@ -1,0 +1,31 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/**/*.py",
+    "tests/**/*.py"
+  ],
+  "project": [
+    "src/**/*.py"
+  ],
+  "ignore": [
+    ".git/**",
+    "node_modules/**",
+    ".venv/**",
+    ".planning/**",
+    "*.md",
+    ".*"
+  ],
+  "ignoreDependencies": [
+    "mcp",
+    "praw",
+    "python-dotenv",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-anyio",
+    "ruff",
+    "mypy",
+    "vulture",
+    "pre-commit"
+  ]
+}

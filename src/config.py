@@ -1,11 +1,12 @@
 """
-Configuration module for italia-career-mod MCP server.
+Configuration module for mcp-reddit-mod MCP server.
 
 This module handles environment variable loading and server configuration.
 It provides validation for required Reddit credentials and server settings.
 """
 
 import os
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -15,11 +16,11 @@ load_dotenv()
 # Server Configuration
 # =============================================================================
 
-SERVER_NAME = os.getenv("SERVER_NAME", "italia-career-mod")
+SERVER_NAME = os.getenv("SERVER_NAME", "mcp-reddit-mod")
 SERVER_VERSION = os.getenv("SERVER_VERSION", "0.1.0")
 SERVER_DESCRIPTION = os.getenv(
     "SERVER_DESCRIPTION",
-    "AI-assisted Reddit moderation for r/italycareer"
+    "AI-assisted Reddit moderation for r/reddit"
 )
 
 # Server binding configuration
@@ -38,7 +39,7 @@ REDDIT_USERNAME = os.getenv("REDDIT_USERNAME")
 REDDIT_PASSWORD = os.getenv("REDDIT_PASSWORD")
 REDDIT_USER_AGENT = os.getenv(
     "REDDIT_USER_AGENT",
-    f"italia-career-mod/{SERVER_VERSION} by {REDDIT_USERNAME or 'unknown'}"
+    f"mcp-reddit-mod/{SERVER_VERSION} by {REDDIT_USERNAME or 'unknown'}"
 )
 
 # Reddit API request timeout (REDI-04)
@@ -51,7 +52,7 @@ try:
     if REDDIT_REQUEST_TIMEOUT <= 0:
         raise ValueError(f"REDDIT_REQUEST_TIMEOUT must be positive (got {REDDIT_REQUEST_TIMEOUT})")
     if REDDIT_REQUEST_TIMEOUT > 600:
-        raise ValueError(f"REDDIT_REQUEST_TIMEOUT must be <= 600 seconds (got {REDDIT_REQUEST_TIMEOUT})")
+        raise ValueError(f"REDDIT_REQUEST_TIMEOUT max is 600s (got {REDDIT_REQUEST_TIMEOUT})")
 except ValueError as e:
     raise ValueError(
         f"Invalid REDDIT_REQUEST_TIMEOUT value: '{_REDDIT_REQUEST_TIMEOUT_RAW}'. "

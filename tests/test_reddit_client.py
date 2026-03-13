@@ -265,7 +265,6 @@ class TestRedditClientTimeout:
 
         Reference: REQUIREMENTS.md REDI-04
         """
-        import importlib
         import os
         import sys
 

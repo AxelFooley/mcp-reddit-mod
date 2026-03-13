@@ -7,8 +7,8 @@ REQUIREMENTS.md. Tests are organized by requirement ID for traceability.
 Test stubs created in Wave 0 (01-00-PLAN.md) - implementations in Wave 1 (01-01-PLAN.md).
 """
 
+
 import pytest
-from unittest.mock import Mock, AsyncMock
 
 
 class TestHTTPTransport:
@@ -171,7 +171,7 @@ class TestServerMetadata:
 
         Reference: REQUIREMENTS.md MCPF-04
         """
-        from src.config import SERVER_NAME, SERVER_VERSION, SERVER_DESCRIPTION
+        from src.config import SERVER_DESCRIPTION, SERVER_NAME, SERVER_VERSION
         from src.server import mcp
         # Verify server configuration
         assert SERVER_NAME == "italia-career-mod"

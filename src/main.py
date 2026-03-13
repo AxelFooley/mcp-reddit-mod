@@ -5,8 +5,7 @@ This module loads configuration and starts the FastMCP server with
 streamable-http transport for Docker deployment.
 """
 
-import sys
-from src.config import load_config, validate_reddit_credentials, SERVER_HOST, SERVER_PORT
+from src.config import SERVER_HOST, SERVER_PORT, load_config, validate_reddit_credentials
 from src.server import mcp
 
 
@@ -41,7 +40,7 @@ def main():
     print(f"Starting {config['name']} v{config['version']}")
     print(f"Description: {config['description']}")
     print(f"Binding to {SERVER_HOST}:{SERVER_PORT}")
-    print(f"Transport: streamable-http")
+    print("Transport: streamable-http")
     print()
 
     # Start the MCP server with streamable-http transport

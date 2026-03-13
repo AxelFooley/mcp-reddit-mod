@@ -1,0 +1,44 @@
+# Pre-commit hooks for mcp-reddit-mod
+# Install: pip install pre-commit
+# Enable: pre-commit install
+
+repos:
+  # Python dead code detection with vulture
+  - repo: local
+    hooks:
+      - id: vulture
+        name: Find dead Python code (vulture)
+        entry: uv run vulture src/ --min-confidence 80
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+
+  # Run knip for unused dependency/file detection (JS/TS focused)
+  - repo: local
+    hooks:
+      - id: knip
+        name: Find unused files and dependencies (knip)
+        entry: npx knip
+        pass_filenames: false
+        language: system
+        always_run: true
+
+  # Run existing linters
+  - repo: local
+    hooks:
+      - id: ruff
+        name: Lint with ruff
+        entry: uv run ruff check .
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: Type check with mypy
+        entry: uv run mypy src/
+        language: system
+        types: [python]
+        pass_filenames: false

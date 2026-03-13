@@ -50,3 +50,8 @@ Thumbs.db
 # uv
 .uv/
 uv.lock
+
+# Node.js (for knip pre-commit hook)
+node_modules/
+package-lock.json
+

@@ -27,6 +27,8 @@ dev-dependencies = [
     "pytest-mock>=3.14.0",
     "ruff>=0.8.0",
     "mypy>=1.8.0",
+    "vulture>=2.15",
+    "pre-commit>=4.5",
 ]
 
 [tool.ruff]
@@ -59,3 +61,18 @@ module = [
     "dotenv.*",
 ]
 ignore_missing_imports = true
+
+[tool.vulture]
+min_confidence = 80
+paths = ["src"]
+exclude = ["tests/", ".venv/", "node_modules/"]
+ignore_names = [
+    # Common false positives
+    "visit_*",
+    "asdict",
+    "do_.*",
+    # Test fixtures
+    "test_*",
+    # FastMCP decorators may create false positives
+    "_.*",
+]
