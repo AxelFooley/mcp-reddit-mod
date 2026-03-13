@@ -22,6 +22,8 @@ See: .planning/PROJECT.md (updated 2025-03-11)
 
 **Core value:** AI-assisted Reddit moderation with human oversight. Automated review of mod queue items with intelligent repeat offender detection, while keeping humans in control of destructive actions.
 
+**Project renamed:** 2026-03-13 — italia-career-mod → mcp-reddit-mod (generic naming)
+
 **Current focus:** Phase 3 - Moderation Tools
 
 ## Current Position
