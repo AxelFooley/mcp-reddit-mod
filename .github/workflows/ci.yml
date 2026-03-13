@@ -82,8 +82,7 @@ jobs:
           tags: mcp-reddit-mod:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Verify image
-        run: docker images | grep mcp-reddit-mod
+
 
   push:
     needs: build
